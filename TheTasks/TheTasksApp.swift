@@ -49,6 +49,10 @@ struct TheTasksApp: App {
         .windowToolbarStyle(.unified(showsTitle: false))
         .commands {
             SidebarCommands()
+            CommandGroup(after: .newItem) {
+                Button("New Task") { state.createNewTask() }
+                    .keyboardShortcut("n", modifiers: [.command, .option])                    
+            }
         }
     }
 

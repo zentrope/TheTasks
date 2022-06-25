@@ -121,12 +121,18 @@ extension AppViewState {
 
     func createNewTask() {
         let newTask = TheTask(newTask: "New task")
+        if !isFocusedOnToday {
+            // You can create a new task whenever you want, but always make sure "Today" is visible before adding it to the list of today's task list.
+            Task {
+                self.gotoToday()
+            }
+        }
         Task {
             do {
                 try await self.taskManager.insert(task: newTask)
 
                 Task {
-                    // Hack: Scheduling this update seems to keep the database update from interfering with selection, or something like that. This occurs after "reload()" triggered by the previous insert. If we do this without a delay, the reload seems to clobber the selection. No idea why. I hope this doesn't work just by accident.
+                    // Hack: Scheduling this update seems to keep the database update from interfering with selection, or something like that. This occurs after "reload()" triggered by the previous insert. If we do this without a delay, the reload seems to clobber the selection. Guess: this updates the main actor so it is suspended until the previous task is completed due to actor serialization. Guessing that when you call a main-actor method from within the actor, the call is not serialized.
                     selectedTask = newTask.id
                     focusedTask = .task(newTask.id)
                 }
