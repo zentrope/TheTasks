@@ -10,7 +10,6 @@ import SwiftUI
 struct DetailView: View {
 
     @EnvironmentObject private var state: AppViewState
-    @FocusState private var focusedTask: FocusTask?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -36,11 +35,64 @@ struct DetailView: View {
         }
         .listStyle(.inset(alternatesRowBackgrounds: false))
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
-        .onChange(of: state.focusedTask) { focus in
-            focusedTask = focus
+        .toolbar { [unowned state] in
+            // Using unowned here because I head a rumor that .toolbar retains stuff. Doing this seems to reduce memory leaks when the view is re-created after being completely swapped out. Declaring toolbar items inline here is worse.
+            TodayToolbar(state: state)
+        }
+
+    }
+
+    @State private var selectedDate: Date = Date()
+    @State private var showPicker = false
+
+    @available(macOS, deprecated: 13, message: "Verify toolbar workaround still necessary")
+    @ToolbarContentBuilder
+    func TodayToolbar(state: AppViewState) -> some ToolbarContent {
+        // Using this rather than in-lining the toolbar items seems to prevent the memory leak that happens when the toolbar is recreated after switch back from another view in the application. Revisit this with macos 13.
+
+        ToolbarItemGroup {
+            Button(action: { state.createNewTask() }, label: { Image(systemName: "plus") })
+
+            Button {
+                showPicker.toggle()
+            } label: {
+                Image(systemName: "calendar")
+
+            }
+            .popover(isPresented: $showPicker) {
+                VStack(alignment: .center, spacing: 10) {
+                    DatePicker("", selection: $selectedDate, displayedComponents: .date)
+                        .labelsHidden()
+                        .datePickerStyle(.graphical)
+                    Button {
+                        state.gotoToday()
+                    } label: {
+                        Label("Today", systemImage: "calendar")
+                    }
+                }
+                .padding()
+            }
+            .onChange(of: selectedDate) { newDate in
+                state.focusDate = newDate
+            }
+
+            Spacer()
+            ControlGroup {
+                Button(action: { state.goBackOneDay() }, label: { Image(systemName: "chevron.backward") })
+                    .help("Show yesterday's tasks")
+
+                Button("Today", action: { state.gotoToday() })
+                    .help("Show today's tasks")
+
+                Button(action: { state.goForwardOneDay() }, label: { Image(systemName: "chevron.forward") })
+                    .help("Show tomorrow's tasks")
+                    .disabled(state.isFocusedOnToday)
+            }
         }
     }
 }
+
+
 
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
