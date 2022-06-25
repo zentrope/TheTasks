@@ -10,20 +10,31 @@ import SwiftUI
 struct DateView: View {
 
     enum Format: String {
+
+        /// Tuesday
+        case weekdayName = "EEEE"
+
         /// "MM-dd-yyyy hh:mm a"
         case dateTimeMonthFirst = "MM-dd-yyyy hh:mm a"
+
         /// "yyyy-MM-dd"
         case dateShort = "yyyy-MM-dd"
+
         /// "yyyy-MM-dd hh:mm a"
         case dateTime = "yyyy-MM-dd hh:mm a"
+
         /// "yyyy-MM-dd'T'HH:mm:ssZ"
         case iso8601 = "yyyy-MM-dd'T'HH:mm:ssZ"
+
         /// "MMMM d, yyyy @ hh:mm a"
         case dateTimeNameLong = "MMMM d, yyyy @ hh:mm a"
+
         /// "MMMM d, yyyy"
         case dateNameMedium = "MMMM d, yyyy"
+
         /// "MMM dd, yyyy"
         case dateNameShort = "MMM dd, yyyy"
+
         /// "EEEE, MMMM d, yyyy' - 'h:mm a"
         case dateDayTimeNameLong = "EEEE, MMMM d, yyyy' - 'h:mm a"
 
@@ -37,6 +48,7 @@ struct DateView: View {
         case dateMonthYear = "MMMM yyyy"
 
         case overdueSince = "formatOverdue()"
+
         case timeSince = "formatTimeSince()"
     }
 

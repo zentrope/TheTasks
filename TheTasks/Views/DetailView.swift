@@ -14,9 +14,7 @@ struct DetailView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            DateView(date: state.focusDate, format: .journalStyle)
-                .font(.system(size: 22, weight: .bold, design: .rounded))                
-                .foregroundColor(state.isFocusedOnToday ? .red : .accentColor)
+            DetailTitleView(date: state.focusDate)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.background)
@@ -34,7 +32,7 @@ struct DetailView: View {
             }
 
             Divider()
-            TaskStatsView(/*state: state*/)
+            TaskStatsView()
         }
         .listStyle(.inset(alternatesRowBackgrounds: false))
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
