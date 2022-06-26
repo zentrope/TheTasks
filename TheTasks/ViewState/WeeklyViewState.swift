@@ -14,7 +14,6 @@ fileprivate let log = Logger("WeeklyViewState")
 @MainActor
 final class WeeklyViewState: NSObject, ObservableObject {
 
-    //@Published var tasks = [TheTask]()
     @Published var days = [TaskDay]()
     @Published var focus = Date()
     @Published var completedTasks = 0
@@ -25,13 +24,40 @@ final class WeeklyViewState: NSObject, ObservableObject {
     private var cursor: NSFetchedResultsController<TaskMO>
 
     override init() {
-        log.debug("Initializing WeeklyViewState")
         self.taskManager = TheTaskManager(controller: PersistenceController.shared)
         self.cursor = taskManager.taskCursor()
         super.init()
         self.cursor.delegate = self
         self.refocus(on: self.focus)
         self.reload()
+    }
+
+    func export() {
+        log.debug("An export was requested.")
+        var lines = [String]()
+        for day in days {
+            let title = "\n# \(day.id.humanString)\n"
+            lines.append(title)
+            for task in day.tasks {
+                let token     = ":task"
+                let id        = "[id:\(task.id.uuidString.lowercased())]"
+                let created   = "[created:\(task.created.iso8601)]"
+                let completed = "[completed:\(task.completed?.iso8601 ?? "none")]"
+                let name      = task.task
+
+                let row = "\(token) \(id) \(created) \(completed) \(name)"
+                lines.append(row)
+            }
+        }
+        let text = lines.joined(separator: "\n")
+
+        do {
+            let timestamp = focus.endOfWeek().exportMonthYearWeekString
+            let filename = "Task Inventory \(timestamp)"
+            try AppKit.save(text: text, toName: filename)
+        } catch (let error) {
+            show(alert: error)
+        }
     }
 
     func focus(on date: Date) {

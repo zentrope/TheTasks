@@ -42,6 +42,15 @@ struct WeeklyView: View {
         .onAppear {
             state.focus(on: date)
         }
+        .toolbar {
+            Spacer()
+            Button {
+                state.export()
+            } label: {
+                Image(systemName: "square.and.arrow.down")
+            }
+            .help("Export weekly task report")
+        }
     }
 }
 

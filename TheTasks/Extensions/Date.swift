@@ -33,4 +33,25 @@ extension Date {
     func lastWeek() -> Date {
         Calendar.current.date(byAdding: .day, value: -7, to: self)!
     }
+
+    var iso8601: String {
+        // MACOS13: replace this with .ISO8601Format(.style)
+        let formatter = ISO8601DateFormatter()
+        formatter.timeZone = .current
+        return formatter.string(from: self)
+    }
+
+    var humanString: String {
+        custom(format: "EEEE, MMMM dd, yyyy")
+    }
+
+    var exportMonthYearWeekString: String {
+        custom(format: "MMMM yyyy - 'Week' ww")
+    }
+
+    private func custom(format: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        return formatter.string(from: self)
+    }
 }
