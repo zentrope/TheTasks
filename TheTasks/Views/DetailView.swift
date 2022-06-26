@@ -30,10 +30,10 @@ struct DetailView: View {
                 }
             }
 
-            Divider()
             TaskStatsView()
         }
         .listStyle(.inset(alternatesRowBackgrounds: false))
+        .frame(minWidth: 350, idealWidth: 350)
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
         .toolbar { [unowned state] in
             // Using unowned here because I head a rumor that .toolbar retains stuff. Doing this seems to reduce memory leaks when the view is re-created after being completely swapped out. Declaring toolbar items inline here is worse.
@@ -73,6 +73,7 @@ struct DetailView: View {
                 .padding()
             }
             .onChange(of: selectedDate) { newDate in
+                // TODO: get rid of state.focusDate
                 state.focusDate = newDate
             }
 
@@ -91,8 +92,6 @@ struct DetailView: View {
         }
     }
 }
-
-
 
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {

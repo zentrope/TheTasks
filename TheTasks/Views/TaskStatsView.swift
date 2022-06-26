@@ -20,11 +20,15 @@ struct TaskStatsView: View {
                     .foregroundColor(.blue)
             }
 
+            Divider()
+
             HStack(spacing: 4) {
                 Text("Pending:")
                 Text("\(state.pendingTasks)")
                     .foregroundColor(.red)
             }
+
+            Divider()
 
             HStack(spacing: 4) {
                 Text("Completed:")
@@ -32,18 +36,23 @@ struct TaskStatsView: View {
                     .foregroundColor(.blue)
             }
 
+            Divider()
+
             HStack(spacing: 4) {
                 Text("Cancelled:")
                 Text("\(state.cancelledTasks)")
                     .foregroundColor(.blue)
-
             }
             Spacer()
         }
-        .padding(.vertical, 4)
+        .fixedSize(horizontal: false, vertical: true)
+        .lineLimit(1)
+        .padding(.vertical, 6)
         .padding(.horizontal, 20)
         .font(.callout)
         .foregroundColor(.secondary)
+        .background(.background)
+        .overlay(Divider(), alignment: .top)
     }
 }
 
