@@ -21,7 +21,7 @@ extension TaskMO {
     @NSManaged public var created: Date
     @NSManaged public var completed: Date?
     @NSManaged public var status: String
-
+    @NSManaged public var isExportable: Bool
 }
 
 extension TaskMO : Identifiable {

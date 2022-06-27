@@ -20,10 +20,28 @@ struct WeeklyView: View {
                     Section(header: DateView(date: day.id, format: .journalStyle)) {
                         ForEach(day.tasks, id: \.id) { task in
                             HStack {
-                                Image(systemName: "checkmark.circle")
-                                    .foregroundColor(.green)
-                                    .font(.title2)
+
+                                if task.isExportable {
+                                    Image(systemName: "checkmark.circle")
+                                        .foregroundColor(.green)
+                                        .font(.title2)
+                                        .help("Click to omit from export")
+                                        .onTapGesture {
+                                            state.update(task: task.id, isExportable: false)
+                                        }
+
+                                } else {
+                                    Image(systemName: "x.circle")
+                                        .foregroundColor(.secondary)
+                                        .font(.title2)
+                                        .help("Click to include in export")
+                                        .onTapGesture {
+                                            state.update(task: task.id, isExportable: true)
+                                        }
+                                }
+
                                 Text(task.task)
+                                    .foregroundColor(task.isExportable ? .primary : .secondary)
 
                                 Spacer()
                                 DateView(date: task.created, format: .dateShort)

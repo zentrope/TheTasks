@@ -36,9 +36,14 @@ final class WeeklyViewState: NSObject, ObservableObject {
         log.debug("An export was requested.")
         var lines = [String]()
         for day in days {
+            let tasks = day.tasks.filter({ $0.isExportable })
+            guard tasks.count > 0 else { continue }
+
             let title = "\n# \(day.id.humanString)\n"
             lines.append(title)
-            for task in day.tasks {
+
+            for task in tasks {
+
                 let token     = ":task"
                 let id        = "[id:\(task.id.uuidString.lowercased())]"
                 let created   = "[created:\(task.created.iso8601)]"
@@ -65,6 +70,16 @@ final class WeeklyViewState: NSObject, ObservableObject {
         refocus(on: date)
     }
 
+    func update(task id: UUID, isExportable: Bool) {
+        Task {
+            do {
+                try await taskManager.update(task: id, isExportable: isExportable)
+            } catch (let error) {
+                show(alert: error)
+            }
+        }
+    }
+
     private func refocus(on date: Date) {
         let fromDate = date.startOfWeek() as NSDate
         let toDate = date.endOfWeek() as NSDate
@@ -85,7 +100,10 @@ final class WeeklyViewState: NSObject, ObservableObject {
 
                 var records = [TaskDay]()
                 for day in days.keys.sorted(by: { $0 < $1 }) {
-                    let tasks = days[day]?.sorted(by: { $0.completed ?? Date.distantPast > $1.completed ?? Date.distantPast }) ?? []
+                    let tasks = days[day]?
+                        .sorted(by: { $0.completed ?? Date.distantPast > $1.completed ?? Date.distantPast })
+                        .sorted(by: { $0.isExportable && !$1.isExportable })
+                    ?? []
                     let taskDay = TaskDay(id: day, tasks: tasks)
                     records.append(taskDay)
                 }

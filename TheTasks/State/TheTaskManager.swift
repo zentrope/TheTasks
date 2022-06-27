@@ -29,6 +29,16 @@ struct TheTaskManager {
             taskMO.created = task.created
             taskMO.completed = task.completed
             taskMO.status = task.status.rawValue
+            taskMO.isExportable = false
+            try context.commit()
+        }
+    }
+
+    func update(task id: UUID, isExportable: Bool) async throws {
+        let context = controller.newBackgroundContext()
+        try await context.perform {
+            let taskMO = try find(task: id, context: context)
+            taskMO.isExportable = isExportable
             try context.commit()
         }
     }

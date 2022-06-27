@@ -13,6 +13,7 @@ struct TheTask: Identifiable, Equatable {
     var task: String
     var created: Date
     var completed: Date?
+    var isExportable: Bool
     var status: TaskMO.TaskStatus
 
     init(newTask: String) {
@@ -21,6 +22,7 @@ struct TheTask: Identifiable, Equatable {
         self.created = Date()
         self.completed = nil
         self.status = .pending
+        self.isExportable = false
     }
 
     init(mo task: TaskMO) {
@@ -29,5 +31,6 @@ struct TheTask: Identifiable, Equatable {
         self.created = task.created
         self.completed = task.completed
         self.status = task.taskStatus
+        self.isExportable = task.isExportable
     }
 }
