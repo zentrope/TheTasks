@@ -17,6 +17,8 @@ final class WeeklyViewState: NSObject, ObservableObject {
     @Published var days = [TaskDay]()
     @Published var focus = Date()
     @Published var completedTasks = 0
+    @Published var exportableTasks = 0
+    @Published var showAllTasks = true
     @Published var error: Error?
     @Published var showAlert = false
 
@@ -70,6 +72,11 @@ final class WeeklyViewState: NSObject, ObservableObject {
         refocus(on: date)
     }
 
+    func toggle(visible: Bool) {
+        showAllTasks = visible        
+        refocus(on: self.focus)
+    }
+
     func update(task id: UUID, isExportable: Bool) {
         Task {
             do {
@@ -83,10 +90,14 @@ final class WeeklyViewState: NSObject, ObservableObject {
     private func refocus(on date: Date) {
         let fromDate = date.startOfWeek() as NSDate
         let toDate = date.endOfWeek() as NSDate
-        let predicate = NSPredicate(format: "completed >= %@ and completed <= %@", fromDate, toDate)
+        var clauses = [NSPredicate(format: "completed >= %@ and completed <= %@", fromDate, toDate)]
+        if !showAllTasks {
+            clauses.append(NSPredicate(format: "isExportable = true"))
+        }
         let sorters = [NSSortDescriptor(key: "completed", ascending: true)]
-        self.cursor.fetchRequest.predicate = predicate
+        self.cursor.fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: clauses)
         self.cursor.fetchRequest.sortDescriptors = sorters
+        reload()
     }
 
     private func reload() {
@@ -95,7 +106,6 @@ final class WeeklyViewState: NSObject, ObservableObject {
                 try cursor.performFetch()
 
                 let tasks = (cursor.fetchedObjects ?? []).map { TheTask.init(mo: $0) }
-
                 let days = Dictionary(grouping: tasks, by: { task in Calendar.current.startOfDay(for: task.completed!) })
 
                 var records = [TaskDay]()
@@ -109,6 +119,7 @@ final class WeeklyViewState: NSObject, ObservableObject {
                 }
                 self.days = records
                 self.completedTasks = tasks.count
+                self.exportableTasks = tasks.filter { $0.isExportable }.count
             } catch (let error) {
                 show(alert: error)
             }

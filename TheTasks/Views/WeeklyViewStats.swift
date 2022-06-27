@@ -11,21 +11,36 @@ struct WeeklyViewStats: View {
 
     var focus: Date
     var count: Int
+    var exportableCount: Int
 
     var body: some View {
         HStack(spacing: 20) {
+
             Spacer()
 
-            DateView(date: focus.startOfWeek(), format: .nameMonthDayYear)
-                .foregroundColor(.purple)
+            Group {
+                DateView(date: focus.startOfWeek(), format: .nameMonthDayYear)
+                    .foregroundColor(.purple)
 
-            Divider()
+                Divider()
+            }
 
-            HStack {
+            HStack(spacing: 4) {
                 Text("Completed:")
                 Text("\(count)")
                     .foregroundColor(.green)
+                    .font(.callout.monospacedDigit())
             }
+
+            Divider()
+
+            HStack(spacing: 4) {
+                Text("Exportable:")
+                Text("\(exportableCount)")
+                    .foregroundColor(.green)
+                    .font(.callout.monospacedDigit())
+            }
+            .fixedSize()
 
             Divider()
 
@@ -47,6 +62,6 @@ struct WeeklyViewStats: View {
 
 struct WeeklyViewStat_Previews: PreviewProvider {
     static var previews: some View {
-        WeeklyViewStats(focus: Date(), count: 52)
+        WeeklyViewStats(focus: Date(), count: 52, exportableCount: 32)
     }
 }

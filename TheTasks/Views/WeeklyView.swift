@@ -15,6 +15,17 @@ struct WeeklyView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            HStack {
+                DateView(date: state.focus.startOfWeek(), format: .nameMonthDayYear)
+                Spacer()
+                DateView(date: state.focus.endOfWeek(), format: .nameMonthDayYear)
+            }
+            .lineLimit(1)
+            .font(.taskHeading)
+            .foregroundColor(.secondary)
+            .padding()
+            .background(.background)
+
             List {
                 ForEach(state.days, id: \.id) { day in
                     Section(header: DateView(date: day.id, format: .journalStyle)) {
@@ -22,7 +33,7 @@ struct WeeklyView: View {
                             HStack {
 
                                 if task.isExportable {
-                                    Image(systemName: "checkmark.circle")
+                                    Image(systemName: "square.and.arrow.down")
                                         .foregroundColor(.green)
                                         .font(.title2)
                                         .help("Click to omit from export")
@@ -31,7 +42,7 @@ struct WeeklyView: View {
                                         }
 
                                 } else {
-                                    Image(systemName: "x.circle")
+                                    Image(systemName: "hand.raised.slash")
                                         .foregroundColor(.secondary)
                                         .font(.title2)
                                         .help("Click to include in export")
@@ -41,7 +52,7 @@ struct WeeklyView: View {
                                 }
 
                                 Text(task.task)
-                                    .foregroundColor(task.isExportable ? .primary : .secondary)
+                                    //.foregroundColor(task.isExportable ? .primary : .secondary)
 
                                 Spacer()
                                 DateView(date: task.created, format: .dateShort)
@@ -53,15 +64,24 @@ struct WeeklyView: View {
                     }
                 }
             }
-            WeeklyViewStats(focus: state.focus, count: state.completedTasks)
+            WeeklyViewStats(focus: state.focus, count: state.completedTasks, exportableCount: state.exportableTasks)
         }
         .frame(minWidth: 350, idealWidth: 350)
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
         .onAppear {
             state.focus(on: date)
         }
+        .onChange(of: state.showAllTasks) { visible in
+            state.toggle(visible: visible)
+        }
         .toolbar {
             Spacer()
+            Menu {
+                Toggle("Show all tasks", isOn: $state.showAllTasks)
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+            }
+
             Button {
                 state.export()
             } label: {
