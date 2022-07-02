@@ -14,13 +14,22 @@ fileprivate let log = Logger("WeeklyViewState")
 @MainActor
 final class WeeklyViewState: NSObject, ObservableObject {
 
+    // State
     @Published var days = [TaskDay]()
     @Published var focus = Date()
+
+    // Status
     @Published var completedTasks = 0
     @Published var exportableTasks = 0
+
+    // Presentation options
     @Published var showAllTasks = true
+    @Published var mostRecentFirst = true
+
+    // Reporting
     @Published var error: Error?
     @Published var showAlert = false
+
 
     private var taskManager: TheTaskManager
     private var cursor: NSFetchedResultsController<TaskMO>
@@ -41,7 +50,7 @@ final class WeeklyViewState: NSObject, ObservableObject {
             let tasks = day.tasks.filter({ $0.isExportable })
             guard tasks.count > 0 else { continue }
 
-            let title = "\n# \(day.id.humanString)\n"
+            let title = "\n# \(day.date.humanString)\n"
             lines.append(title)
 
             for task in tasks {
@@ -77,6 +86,11 @@ final class WeeklyViewState: NSObject, ObservableObject {
         refocus(on: self.focus)
     }
 
+    func resort() {
+        self.days = []
+        refocus(on: self.focus)
+    }
+
     func update(task id: UUID, isExportable: Bool) {
         Task {
             do {
@@ -94,29 +108,33 @@ final class WeeklyViewState: NSObject, ObservableObject {
         if !showAllTasks {
             clauses.append(NSPredicate(format: "isExportable = true"))
         }
-        let sorters = [NSSortDescriptor(key: "completed", ascending: true)]
+        let sorters = [
+            NSSortDescriptor(key: "isExportable", ascending: false),
+            NSSortDescriptor(key: "completed", ascending: true)
+        ]
         self.cursor.fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: clauses)
         self.cursor.fetchRequest.sortDescriptors = sorters
         reload()
     }
 
     private func reload() {
+
         Task {
             do {
                 try cursor.performFetch()
 
                 let tasks = (cursor.fetchedObjects ?? []).map { TheTask.init(mo: $0) }
-                let days = Dictionary(grouping: tasks, by: { task in Calendar.current.startOfDay(for: task.completed!) })
 
                 var records = [TaskDay]()
-                for day in days.keys.sorted(by: { $0 < $1 }) {
-                    let tasks = days[day]?
-                        .sorted(by: { $0.completed ?? Date.distantPast > $1.completed ?? Date.distantPast })
-                        .sorted(by: { $0.isExportable && !$1.isExportable })
-                    ?? []
-                    let taskDay = TaskDay(id: day, tasks: tasks)
+
+                let stamps = self.focus.weeklyStarts.sorted(by: {if mostRecentFirst { return $1 < $0 } else { return $0 < $1 }})
+
+                for stamp in stamps {
+                    let tasks = tasks.filter { stamp.onSameDay(as: $0.completed) }
+                    let taskDay = TaskDay(id: stamp, tasks: tasks)
                     records.append(taskDay)
                 }
+
                 self.days = records
                 self.completedTasks = tasks.count
                 self.exportableTasks = tasks.filter { $0.isExportable }.count
@@ -133,8 +151,15 @@ final class WeeklyViewState: NSObject, ObservableObject {
     }
 
     struct TaskDay: Identifiable {
-        var id: Date
+        var id: Int
+        var date: Date
         var tasks: [TheTask]
+
+        init(id: Date, tasks: [TheTask]) {
+            self.id = Calendar.current.dateComponents([.day], from: id).day ?? 0
+            self.date = id
+            self.tasks = tasks
+        }
     }
 }
 

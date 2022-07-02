@@ -34,6 +34,12 @@ extension Date {
         Calendar.current.date(byAdding: .day, value: -7, to: self)!
     }
 
+    func onSameDay(as other: Date?) -> Bool {
+        guard let other = other else { return false }
+        let cal = Calendar.current
+        return cal.startOfDay(for: self) == cal.startOfDay(for: other)
+    }
+
     var iso8601: String {
         // MACOS13: replace this with .ISO8601Format(.style)
         let formatter = ISO8601DateFormatter()
@@ -47,6 +53,16 @@ extension Date {
 
     var exportMonthYearWeekString: String {
         custom(format: "MMMM yyyy - 'Week' ww")
+    }
+
+    var weeklyStarts: [Date] {
+        let start = self.startOfWeek()
+        var results = [Date]()
+        for offset in (0..<7) {
+            let day = Calendar.current.date(byAdding: .day, value: offset, to: start)!          
+            results.append(day)
+        }
+        return results
     }
 
     private func custom(format: String) -> String {

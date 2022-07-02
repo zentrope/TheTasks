@@ -28,36 +28,24 @@ struct WeeklyView: View {
 
             List {
                 ForEach(state.days, id: \.id) { day in
-                    Section(header: DateView(date: day.id, format: .journalStyle)) {
+                    Section(header: DateView(date: day.date, format: .journalStyle)) {
                         ForEach(day.tasks, id: \.id) { task in
                             HStack {
-                                if task.isExportable {
-                                    Image(systemName: "arrow.down.circle")
-                                        .foregroundColor(.mint)
-                                        .font(.title2)
-                                        .help("Click to omit from export")
-                                        .onTapGesture {
-                                            state.update(task: task.id, isExportable: false)
-                                        }
-
-                                } else {
-                                    Image(systemName: "arrow.down.circle")
-                                        .foregroundColor(.secondary)
-                                        .font(.title2)
-                                        .help("Click to include in export")
-                                        .onTapGesture {
-                                            state.update(task: task.id, isExportable: true)
-                                        }
-                                }
+                                Image(systemName: "arrow.down.circle")
+                                    .foregroundColor(task.isExportable ? .mint : .secondary)
+                                    .font(.title2)
+                                    .help(task.isExportable ? "Omit from export" : "Include in export")
+                                    .onTapGesture {
+                                        state.update(task: task.id, isExportable: !task.isExportable)
+                                    }
 
                                 Text(task.task)
                                     .foregroundColor(task.isExportable ? .primary : .secondary)
 
                                 Spacer()
-                                DateView(date: task.created, format: .dateShort)
-                                    .font(.callout.monospacedDigit())
 
                                 TaskIcon(status: task.status)
+                                    .opacity(task.isExportable ? 1 : 0.5)
                             }
                             .lineLimit(1)
                         }
@@ -74,10 +62,14 @@ struct WeeklyView: View {
         .onChange(of: state.showAllTasks) { visible in
             state.toggle(visible: visible)
         }
+        .onChange(of: state.mostRecentFirst) { _ in state.resort() }
         .toolbar {
             Spacer()
+
             Menu {
                 Toggle("Show all tasks", isOn: $state.showAllTasks)
+                Divider()
+                Toggle("Most recent first", isOn: $state.mostRecentFirst)
             } label: {
                 Image(systemName: "line.3.horizontal.decrease.circle")
             }
