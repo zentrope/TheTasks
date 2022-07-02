@@ -14,6 +14,9 @@ struct DateView: View {
         /// Tuesday
         case weekdayName = "EEEE"
 
+        /// 12:34 AM
+        case timeHourMinute = "hh:mm a"
+
         /// "MM-dd-yyyy hh:mm a"
         case dateTimeMonthFirst = "MM-dd-yyyy hh:mm a"
 

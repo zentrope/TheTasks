@@ -1,5 +1,5 @@
 //
-//  DetailTitleView.swift
+//  DailyTitleView.swift
 //  TheTasks
 //
 //  Created by Keith Irwin on 6/24/22.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DetailTitleView: View {
+struct DailyTitleView: View {
     var date: Date
 
     var body: some View {
@@ -37,6 +37,6 @@ struct DetailTitleView: View {
 
 struct DetailTitleView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailTitleView(date: Date())
+        DailyTitleView(date: Date())
     }
 }

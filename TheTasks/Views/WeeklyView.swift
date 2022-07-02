@@ -31,10 +31,9 @@ struct WeeklyView: View {
                     Section(header: DateView(date: day.id, format: .journalStyle)) {
                         ForEach(day.tasks, id: \.id) { task in
                             HStack {
-
                                 if task.isExportable {
-                                    Image(systemName: "square.and.arrow.down")
-                                        .foregroundColor(.green)
+                                    Image(systemName: "arrow.down.circle")
+                                        .foregroundColor(.mint)
                                         .font(.title2)
                                         .help("Click to omit from export")
                                         .onTapGesture {
@@ -42,7 +41,7 @@ struct WeeklyView: View {
                                         }
 
                                 } else {
-                                    Image(systemName: "hand.raised.slash")
+                                    Image(systemName: "arrow.down.circle")
                                         .foregroundColor(.secondary)
                                         .font(.title2)
                                         .help("Click to include in export")
@@ -52,12 +51,13 @@ struct WeeklyView: View {
                                 }
 
                                 Text(task.task)
-                                    //.foregroundColor(task.isExportable ? .primary : .secondary)
+                                    .foregroundColor(task.isExportable ? .primary : .secondary)
 
                                 Spacer()
                                 DateView(date: task.created, format: .dateShort)
-                                    .foregroundColor(.blue)
-                                    .font(.callout.weight(.thin))
+                                    .font(.callout.monospacedDigit())
+
+                                TaskIcon(status: task.status)
                             }
                             .lineLimit(1)
                         }
@@ -85,7 +85,7 @@ struct WeeklyView: View {
             Button {
                 state.export()
             } label: {
-                Image(systemName: "square.and.arrow.down")
+                Image(systemName: "arrow.down.circle")
             }
             .help("Export weekly task report")
         }

@@ -1,5 +1,5 @@
 //
-//  DetailView.swift
+//  DailyView.swift
 //  TheTasks
 //
 //  Created by Keith Irwin on 6/22/22.
@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct DetailView: View {
+struct DailyView: View {
 
     @EnvironmentObject private var state: AppViewState
 
     var body: some View {
         VStack(spacing: 0) {
-            DetailTitleView(date: state.focusDate)
+            DailyTitleView(date: state.focusDate)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.background)
@@ -95,6 +95,6 @@ struct DetailView: View {
 
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailView()
+        DailyView()
     }
 }

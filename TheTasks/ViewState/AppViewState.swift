@@ -187,10 +187,7 @@ extension AppViewState {
                 NSSortDescriptor(key: "created", ascending: true)
             ]
         } else {
-            self.cursor.fetchRequest.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
-                NSPredicate(format: "created >= %@ and created <= %@", fromDate as NSDate, toDate as NSDate),
-                NSPredicate(format: "completed >= %@ and completed <= %@", fromDate as NSDate, toDate as NSDate)
-            ])
+            self.cursor.fetchRequest.predicate = NSPredicate(format: "completed >= %@ and completed <= %@", fromDate as NSDate, toDate as NSDate)
 
             self.cursor.fetchRequest.sortDescriptors = [
                 NSSortDescriptor(key: "completed", ascending: true)

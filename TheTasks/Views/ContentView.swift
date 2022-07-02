@@ -24,7 +24,7 @@ struct ContentView: View {
             VStack {
                 List {
                     Section(header: Text("Browse")) {
-                        NavigationLink(destination: DetailView().frame(minWidth: 350), tag: ActiveView.today, selection: $activeView) {
+                        NavigationLink(destination: DailyView().frame(minWidth: 350), tag: ActiveView.today, selection: $activeView) {
                             Label("Today", systemImage: "clock")
                         }
 

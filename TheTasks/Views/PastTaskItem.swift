@@ -38,34 +38,21 @@ struct PastTaskItem: View {
                 Text(task.task)
                     .foregroundColor(completion == .notCompleted ? .primary : .secondary)
             } icon: {
-                switch completion {
-                    case .completedLater:
-                        Image(systemName: "arrow.right.to.line.circle")
-                            .foregroundColor(.green)
-                            .font(.title2)
-                    case .completedNow:
-                        Image(systemName: "checkmark.circle")
-                            .foregroundColor(.gray)
-                            .font(.title2)
-                    case .notCompleted:
-                        Image(systemName: "arrow.forward.circle")
-                            .foregroundColor(.red)
-                            .font(.title2)
-                }
+                TaskIcon(status: task.status)
             }
             Spacer()
-            Group {
-                switch completion {
-                    case .completedLater:
-                        Text("completed later")
-                    case .completedNow:
-                        Text("completed")
-                    case .notCompleted:
-                        Text("still pending")
+            DateView(date: task.completed, format: .timeHourMinute)
+                .font(.callout.monospacedDigit())
+            HStack {
+                Spacer()
+                if task.isExportable {
+                    Image(systemName: "arrow.down.circle")
+                        .foregroundColor(.secondary)
+                        .help("Exportable")
                 }
             }
-            .font(.caption)
-            .foregroundColor(.secondary)
+            .font(.callout)
+            .frame(width: 20)
         }
         .lineLimit(1)
     }
