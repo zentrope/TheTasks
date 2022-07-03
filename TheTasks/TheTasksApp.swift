@@ -20,6 +20,9 @@ struct TheTasksApp: App {
             ContentView()
                 .environmentObject(state)
                 .frame(minWidth: 500, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 400, maxHeight: .infinity)
+                .task {
+                    BadgeManager.shared.update()
+                }
         }
         .windowStyle(.titleBar)
         .windowToolbarStyle(.unified(showsTitle: false))
@@ -32,10 +35,3 @@ struct TheTasksApp: App {
         }
     }
 }
-
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .long
-    formatter.timeStyle = .none
-    return formatter
-}()

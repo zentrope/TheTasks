@@ -13,6 +13,8 @@ fileprivate let log = Logger("TheTaskManager")
 
 struct TheTaskManager {
 
+    static var shared = TheTaskManager(controller: PersistenceController.shared)
+
     private var controller: PersistenceController
 
     init(controller: PersistenceController) {
