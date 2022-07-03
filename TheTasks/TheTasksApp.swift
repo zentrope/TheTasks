@@ -15,13 +15,18 @@ struct TheTasksApp: App {
 
     @StateObject private var state = AppViewState()
 
+    @AppStorage("showBadge") var showBadge = true
+
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(state)
                 .frame(minWidth: 500, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 400, maxHeight: .infinity)
                 .task {
-                    BadgeManager.shared.update()
+                    BadgeManager.shared.showBadge = showBadge
+                }
+                .onChange(of: showBadge) { updatedShowBadgeToggle in
+                    BadgeManager.shared.showBadge = updatedShowBadgeToggle
                 }
         }
         .windowStyle(.titleBar)
@@ -33,5 +38,11 @@ struct TheTasksApp: App {
                     .keyboardShortcut("n", modifiers: [.command, .option])
             }
         }
+
+        #if os(macOS)
+        Settings {
+            SettingsView()
+        }
+        #endif
     }
 }

@@ -24,6 +24,7 @@
 		531135DB28600BE700B165BD /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531135DA28600BE700B165BD /* PersistenceError.swift */; };
 		531135DD28600DBB00B165BD /* AppViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531135DC28600DBB00B165BD /* AppViewState.swift */; };
 		5326B9AA2872062D006CFCDE /* BadgeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326B9A92872062D006CFCDE /* BadgeManager.swift */; };
+		5326B9AC287212DF006CFCDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326B9AB287212DF006CFCDE /* SettingsView.swift */; };
 		53294D0D28601C1E0013AE5F /* EditableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53294D0C28601C1E0013AE5F /* EditableText.swift */; };
 		53294D0F286022C20013AE5F /* TaskItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53294D0E286022C20013AE5F /* TaskItemView.swift */; };
 		53294D11286027E90013AE5F /* DateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53294D10286027E90013AE5F /* DateView.swift */; };
@@ -80,6 +81,7 @@
 		531135DA28600BE700B165BD /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
 		531135DC28600DBB00B165BD /* AppViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewState.swift; sourceTree = "<group>"; };
 		5326B9A92872062D006CFCDE /* BadgeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeManager.swift; sourceTree = "<group>"; };
+		5326B9AB287212DF006CFCDE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		53294D0C28601C1E0013AE5F /* EditableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableText.swift; sourceTree = "<group>"; };
 		53294D0E286022C20013AE5F /* TaskItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItemView.swift; sourceTree = "<group>"; };
 		53294D10286027E90013AE5F /* DateView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateView.swift; sourceTree = "<group>"; };
@@ -218,6 +220,7 @@
 				53294D10286027E90013AE5F /* DateView.swift */,
 				53294D0C28601C1E0013AE5F /* EditableText.swift */,
 				53A2F6C02860F6BB0000517A /* PastTaskItem.swift */,
+				5326B9AB287212DF006CFCDE /* SettingsView.swift */,
 				53760EBC2870B5A900B0731E /* TaskIcon.swift */,
 				53294D0E286022C20013AE5F /* TaskItemView.swift */,
 				538F3B9228642E5B00F33742 /* TaskStatsView.swift */,
@@ -395,6 +398,7 @@
 				5311359E2860041A00B165BD /* ContentView.swift in Sources */,
 				531135D32860067D00B165BD /* TaskMO+CoreDataProperties.swift in Sources */,
 				533A4DE92868276D007E3B3F /* WeeklyViewState.swift in Sources */,
+				5326B9AC287212DF006CFCDE /* SettingsView.swift in Sources */,
 				53294D0F286022C20013AE5F /* TaskItemView.swift in Sources */,
 				531135D22860067D00B165BD /* TaskMO+CoreDataClass.swift in Sources */,
 				53BFC8BC2866933C006E3BAA /* Date.swift in Sources */,
@@ -558,7 +562,7 @@
 				CODE_SIGN_ENTITLEMENTS = TheTasks/TheTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1109;
+				CURRENT_PROJECT_VERSION = 1142;
 				DEVELOPMENT_ASSET_PATHS = "\"TheTasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -586,7 +590,7 @@
 				CODE_SIGN_ENTITLEMENTS = TheTasks/TheTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1109;
+				CURRENT_PROJECT_VERSION = 1142;
 				DEVELOPMENT_ASSET_PATHS = "\"TheTasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -612,7 +616,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1109;
+				CURRENT_PROJECT_VERSION = 1142;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
@@ -631,7 +635,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1109;
+				CURRENT_PROJECT_VERSION = 1142;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
@@ -649,7 +653,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1109;
+				CURRENT_PROJECT_VERSION = 1142;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -666,7 +670,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1109;
+				CURRENT_PROJECT_VERSION = 1142;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
