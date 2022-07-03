@@ -1,5 +1,5 @@
 //
-//  TheTaskManager.swift
+//  TaskManager.swift
 //  TheTasks
 //
 //  Created by Keith Irwin on 6/19/22.
@@ -11,13 +11,14 @@ import OSLog
 
 fileprivate let log = Logger("TheTaskManager")
 
-struct TheTaskManager {
+struct TaskManager {
 
-    static var shared = TheTaskManager(controller: PersistenceController.shared)
+    static var shared = TaskManager(controller: PersistenceController.shared)
 
     private var controller: PersistenceController
 
-    init(controller: PersistenceController) {
+    // Make this public when I figure out how to make tests relevant
+    private init(controller: PersistenceController) {
         self.controller = controller
     }
 
@@ -89,7 +90,7 @@ struct TheTaskManager {
     }
 }
 
-extension TheTaskManager {
+extension TaskManager {
 
     private func find(task id: UUID, context: NSManagedObjectContext) throws -> TaskMO {
         let request = TaskMO.fetchRequest()

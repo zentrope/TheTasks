@@ -38,12 +38,10 @@ final class AppViewState: NSObject, ObservableObject { // NSObject required for 
     // MARK: - Local State
 
     private var cursor: NSFetchedResultsController<TaskMO>
-    private var taskManager: TheTaskManager
     private var subscribers = Set<AnyCancellable>()
 
     override init() {
-        self.taskManager = TheTaskManager(controller: PersistenceController.shared)
-        self.cursor = taskManager.taskCursor()
+        self.cursor = TaskManager.shared.taskCursor()
         super.init()
         self.cursor.delegate = self
 
@@ -91,7 +89,7 @@ extension AppViewState {
     func update(task id: UUID, name: String) {
         Task {
             do {
-                try await taskManager.update(task: id, description: name)
+                try await TaskManager.shared.update(task: id, description: name)
             } catch (let error) {
                 showAlert(error)
             }
@@ -102,7 +100,7 @@ extension AppViewState {
         Task {
             do {
                 let date = status == .pending ? nil : Date()
-                try await taskManager.update(task: id, status: status.rawValue, completed: date)
+                try await TaskManager.shared.update(task: id, status: status.rawValue, completed: date)
             } catch (let error) {
                 showAlert(error)
             }
@@ -112,7 +110,7 @@ extension AppViewState {
     func delete(task id: UUID) {
         Task {
             do {
-                try await taskManager.delete(task: id)
+                try await TaskManager.shared.delete(task: id)
             } catch (let error) {
                 showAlert(error)
             }
@@ -129,7 +127,7 @@ extension AppViewState {
         }
         Task {
             do {
-                try await self.taskManager.insert(task: newTask)
+                try await TaskManager.shared.insert(task: newTask)
 
                 Task {
                     // Hack: Scheduling this update seems to keep the database update from interfering with selection, or something like that. This occurs after "reload()" triggered by the previous insert. If we do this without a delay, the reload seems to clobber the selection. Guess: this updates the main actor so it is suspended until the previous task is completed due to actor serialization. Guessing that when you call a main-actor method from within the actor, the call is not serialized.
@@ -154,10 +152,10 @@ extension AppViewState {
                 let tasks = cursor.fetchedObjects ?? []
                 self.tasks = tasks.map { .init(mo: $0) }
 
-                self.totalTasks = try taskManager.numberOfTasks()
-                self.completedTasks = try taskManager.numberOfTasks(withStatus: .completed)
-                self.pendingTasks = try taskManager.numberOfTasks(withStatus: .pending)
-                self.cancelledTasks = try taskManager.numberOfTasks(withStatus:.cancelled)
+                self.totalTasks = try TaskManager.shared.numberOfTasks()
+                self.completedTasks = try TaskManager.shared.numberOfTasks(withStatus: .completed)
+                self.pendingTasks = try TaskManager.shared.numberOfTasks(withStatus: .pending)
+                self.cancelledTasks = try TaskManager.shared.numberOfTasks(withStatus:.cancelled)
 
             }
             catch (let error) {

@@ -7,7 +7,6 @@
 
 import Cocoa
 import CoreData
-import Foundation
 import UserNotifications
 import OSLog
 
@@ -29,7 +28,7 @@ class BadgeManager: NSObject, NSFetchedResultsControllerDelegate {
 
     private override init() {
 
-        self.cursor = TheTaskManager.shared.taskCursor()
+        self.cursor = TaskManager.shared.taskCursor()
         self.cursor.fetchRequest.predicate = NSPredicate(format: "status = 'pending'")
 
         super.init()
@@ -56,20 +55,20 @@ class BadgeManager: NSObject, NSFetchedResultsControllerDelegate {
                 NSApp.dockTile.badgeLabel = "\(pending)"
             }
         } catch (let error) {
-            print("Error: \(error)")
+            // If this doesn't work, it's not the worst thing in the world, so log it. If there's a way to expose activity to the user without modal alerts (like a logging window), add this message to that.
+            log.error("Unable to update dock tile badge: \(error.localizedDescription).")
         }
     }
+
+    // MARK: - Core Data Delegate
 
     nonisolated func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         Task {
             await update()
         }
     }
-}
 
-// MARK: - Badge Authorizations
-
-extension BadgeManager {
+    // MARK: - User Authorization
 
     private func requestBadgeNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.badge]) { success, error in

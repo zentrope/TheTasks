@@ -30,13 +30,10 @@ final class WeeklyViewState: NSObject, ObservableObject {
     @Published var error: Error?
     @Published var showAlert = false
 
-
-    private var taskManager: TheTaskManager
     private var cursor: NSFetchedResultsController<TaskMO>
 
     override init() {
-        self.taskManager = TheTaskManager(controller: PersistenceController.shared)
-        self.cursor = taskManager.taskCursor()
+        self.cursor = TaskManager.shared.taskCursor()
         super.init()
         self.cursor.delegate = self
         self.refocus(on: self.focus)
@@ -94,7 +91,7 @@ final class WeeklyViewState: NSObject, ObservableObject {
     func update(task id: UUID, isExportable: Bool) {
         Task {
             do {
-                try await taskManager.update(task: id, isExportable: isExportable)
+                try await TaskManager.shared.update(task: id, isExportable: isExportable)
             } catch (let error) {
                 show(alert: error)
             }
