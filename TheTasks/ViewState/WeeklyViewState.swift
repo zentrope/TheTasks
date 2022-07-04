@@ -124,7 +124,7 @@ final class WeeklyViewState: NSObject, ObservableObject {
 
                 var records = [TaskDay]()
 
-                let stamps = self.focus.weeklyStarts.sorted(by: {if mostRecentFirst { return $1 < $0 } else { return $0 < $1 }})
+                let stamps = self.focus.weeklyStarts.sorted(by: {if mostRecentFirst { return $0 < $1 } else { return $1 < $0 }})
 
                 for stamp in stamps {
                     let tasks = tasks.filter { stamp.onSameDay(as: $0.completed) }
