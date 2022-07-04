@@ -12,6 +12,8 @@ struct WeeklyView: View {
     var date: Date
 
     @StateObject private var state = WeeklyViewState()
+    @AppStorage("showAllTasks") var showAllTasks = true
+    @AppStorage("showMostRecentFirst") var showMostRecentFirst = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -56,20 +58,16 @@ struct WeeklyView: View {
         }
         .frame(minWidth: 350, idealWidth: 350)
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
-        .onAppear {
-            state.focus(on: date)
-        }
-        .onChange(of: state.showAllTasks) { visible in
-            state.toggle(visible: visible)
-        }
-        .onChange(of: state.mostRecentFirst) { _ in state.resort() }
+        .onAppear { state.focus(on: date) }
+        .onChange(of: showAllTasks) { isVisible in state.toggle(visible: isVisible) }
+        .onChange(of: showMostRecentFirst) { isMostRecent in state.resort(mostRecentFirst: isMostRecent) }
         .toolbar {
             Spacer()
 
             Menu {
-                Toggle("Show all tasks", isOn: $state.showAllTasks)
+                Toggle("Show all tasks", isOn: $showAllTasks)
                 Divider()
-                Toggle("Most recent first", isOn: $state.mostRecentFirst)
+                Toggle("Most recent first", isOn: $showMostRecentFirst)
             } label: {
                 Image(systemName: "line.3.horizontal.decrease.circle")
             }

@@ -34,6 +34,7 @@
 		53760EBD2870B5A900B0731E /* TaskIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53760EBC2870B5A900B0731E /* TaskIcon.swift */; };
 		537D0A142868D42600B98E77 /* SavePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537D0A132868D42600B98E77 /* SavePanel.swift */; };
 		537D0A162868DE3200B98E77 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537D0A152868DE3200B98E77 /* FileManager.swift */; };
+		538EFBE0287349C500B58630 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538EFBDF287349C500B58630 /* UserDefaults.swift */; };
 		538F3B9128642E1600F33742 /* DailyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538F3B9028642E1600F33742 /* DailyView.swift */; };
 		538F3B9328642E5B00F33742 /* TaskStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538F3B9228642E5B00F33742 /* TaskStatsView.swift */; };
 		53A2F6C12860F6BB0000517A /* PastTaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A2F6C02860F6BB0000517A /* PastTaskItem.swift */; };
@@ -91,6 +92,7 @@
 		53760EBC2870B5A900B0731E /* TaskIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskIcon.swift; sourceTree = "<group>"; };
 		537D0A132868D42600B98E77 /* SavePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePanel.swift; sourceTree = "<group>"; };
 		537D0A152868DE3200B98E77 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
+		538EFBDF287349C500B58630 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		538F3B9028642E1600F33742 /* DailyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyView.swift; sourceTree = "<group>"; };
 		538F3B9228642E5B00F33742 /* TaskStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStatsView.swift; sourceTree = "<group>"; };
 		53A2F6C02860F6BB0000517A /* PastTaskItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastTaskItem.swift; sourceTree = "<group>"; };
@@ -189,9 +191,10 @@
 			isa = PBXGroup;
 			children = (
 				53BFC8BB2866933C006E3BAA /* Date.swift */,
+				537D0A152868DE3200B98E77 /* FileManager.swift */,
 				53BFC8BD2866947F006E3BAA /* Font.swift */,
 				531135CC2860047600B165BD /* Logger.swift */,
-				537D0A152868DE3200B98E77 /* FileManager.swift */,
+				538EFBDF287349C500B58630 /* UserDefaults.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -377,6 +380,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				538EFBE0287349C500B58630 /* UserDefaults.swift in Sources */,
 				53294D11286027E90013AE5F /* DateView.swift in Sources */,
 				537D0A142868D42600B98E77 /* SavePanel.swift in Sources */,
 				538F3B9128642E1600F33742 /* DailyView.swift in Sources */,
@@ -562,7 +566,7 @@
 				CODE_SIGN_ENTITLEMENTS = TheTasks/TheTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1150;
+				CURRENT_PROJECT_VERSION = 1173;
 				DEVELOPMENT_ASSET_PATHS = "\"TheTasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -590,7 +594,7 @@
 				CODE_SIGN_ENTITLEMENTS = TheTasks/TheTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1150;
+				CURRENT_PROJECT_VERSION = 1173;
 				DEVELOPMENT_ASSET_PATHS = "\"TheTasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -616,7 +620,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1150;
+				CURRENT_PROJECT_VERSION = 1173;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
@@ -635,7 +639,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1150;
+				CURRENT_PROJECT_VERSION = 1173;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
@@ -653,7 +657,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1150;
+				CURRENT_PROJECT_VERSION = 1173;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -670,7 +674,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1150;
+				CURRENT_PROJECT_VERSION = 1173;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;

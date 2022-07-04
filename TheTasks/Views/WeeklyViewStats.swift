@@ -13,6 +13,9 @@ struct WeeklyViewStats: View {
     var count: Int
     var exportableCount: Int
 
+    @AppStorage("showAllTasks") var showAllTasks = true
+    @AppStorage("showMostRecentFirst") var showMostRecentFirst = true
+
     var body: some View {
         HStack(spacing: 20) {
 
@@ -48,11 +51,30 @@ struct WeeklyViewStats: View {
                 .foregroundColor(.purple)
 
             Spacer()
+
+            HStack(spacing: 5) {
+
+                // Making these clickable isn't a good UI if this was the only way to toggle these, but, eh, why not?
+
+                Image(systemName: showAllTasks ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                    .foregroundColor(.accentColor)
+                    .help(showAllTasks ? "Showing non-exportable tasks" : "Hiding non-exportable tasks")
+                    .onTapGesture {
+                        showAllTasks.toggle()
+                    }
+
+                Image(systemName: showMostRecentFirst ? "arrowtriangle.down.circle.fill" : "arrowtriangle.up.circle")
+                    .foregroundColor(.accentColor)
+                    .help(showMostRecentFirst ? "Most recent first order" : "Oldest first order")
+                    .onTapGesture {
+                        showMostRecentFirst.toggle()
+                    }
+            }
         }
         .fixedSize(horizontal: false, vertical: true)
         .lineLimit(1)
         .padding(.vertical, 6)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 10)
         .font(.callout)
         .foregroundColor(.secondary)
         .background(.background)

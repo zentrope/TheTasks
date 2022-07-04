@@ -22,20 +22,23 @@ final class WeeklyViewState: NSObject, ObservableObject {
     @Published var completedTasks = 0
     @Published var exportableTasks = 0
 
-    // Presentation options
-    @Published var showAllTasks = true
-    @Published var mostRecentFirst = true
-
     // Reporting
     @Published var error: Error?
     @Published var showAlert = false
 
+    // Implementation state
     private var cursor: NSFetchedResultsController<TaskMO>
+    private var showAllTasks = true
+    private var showMostRecentFirst = true
 
     override init() {
         self.cursor = TaskManager.shared.taskCursor()
         super.init()
         self.cursor.delegate = self
+
+        self.showAllTasks = UserDefaults.standard.bool(forKey: "showAllTasks", ifNew: true)
+        self.showMostRecentFirst = UserDefaults.standard.bool(forKey: "showMostRecentFirst", ifNew: true)
+
         self.refocus(on: self.focus)
         self.reload()
     }
@@ -79,12 +82,13 @@ final class WeeklyViewState: NSObject, ObservableObject {
     }
 
     func toggle(visible: Bool) {
-        showAllTasks = visible        
+        self.showAllTasks = visible
         refocus(on: self.focus)
     }
 
-    func resort() {
-        self.days = []
+    func resort(mostRecentFirst: Bool) {
+        self.days = [] // This seems to help the SwiftUI List view do the right thing at the cost of a little flicker.
+        self.showMostRecentFirst = mostRecentFirst
         refocus(on: self.focus)
     }
 
@@ -124,7 +128,7 @@ final class WeeklyViewState: NSObject, ObservableObject {
 
                 var records = [TaskDay]()
 
-                let stamps = self.focus.weeklyStarts.sorted(by: {if mostRecentFirst { return $0 < $1 } else { return $1 < $0 }})
+                let stamps = self.focus.weeklyStarts.sorted(by: { if showMostRecentFirst { return $0 < $1 } else { return $1 < $0 }})
 
                 for stamp in stamps {
                     let tasks = tasks.filter { stamp.onSameDay(as: $0.completed) }
