@@ -110,7 +110,6 @@ final class WeeklyViewState: NSObject, ObservableObject {
             clauses.append(NSPredicate(format: "isExportable = true"))
         }
         let sorters = [
-            NSSortDescriptor(key: "isExportable", ascending: false),
             NSSortDescriptor(key: "completed", ascending: true)
         ]
         self.cursor.fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: clauses)
