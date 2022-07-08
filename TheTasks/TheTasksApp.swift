@@ -33,9 +33,32 @@ struct TheTasksApp: App {
         .windowToolbarStyle(.unified(showsTitle: false))
         .commands {
             SidebarCommands()
+
+            // File menu
             CommandGroup(after: .newItem) {
                 Button("New Task") { state.createNewTask() }
                     .keyboardShortcut("n", modifiers: [.command, .option])
+            }
+
+            // View menu
+            CommandGroup(before: .sidebar) {
+
+                Button("Today") {
+                    NotificationCenter.default.navigateTo(view: .today)
+                }
+                .keyboardShortcut("1", modifiers: [.command])
+
+                Button("This Week") {
+                    NotificationCenter.default.navigateTo(view: .thisWeek)
+                }
+                .keyboardShortcut("2", modifiers: [.command])
+
+                Button("Last Week") {
+                    NotificationCenter.default.navigateTo(view: .lastWeek)
+                }
+                .keyboardShortcut("3", modifiers: [.command])
+
+                Divider()
             }
         }
 

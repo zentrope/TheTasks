@@ -9,30 +9,24 @@ import SwiftUI
 
 // The "new task" menu item tells AppViewState which enum to use, so we can switch to the right view. But that view will be the detail view, which won't exist (if we ditch global state), so how will it know to create a new task? The alternative is to allow for creating new tasks via a modal when not showing the daily view. Handler: if activeView == .today, then send the create task notification (I guess), otherwise create the modal. Something like that? Hm. Forcing the view to switch to Today when looking at another view is not good. So, modal it is.
 
-enum ActiveView {
-    case today
-    case thisWeek
-    case lastWeek
-}
-
 struct ContentView: View {
 
-    @State private var activeView: ActiveView? = ActiveView.today
+    @StateObject private var nav = NavigationViewState()
 
     var body: some View {
         NavigationView {
             VStack {
                 List {
                     Section(header: Text("Browse")) {
-                        NavigationLink(destination: DailyView().frame(minWidth: 350), tag: ActiveView.today, selection: $activeView) {
+                        NavigationLink(destination: DailyView().frame(minWidth: 350), tag: NavigationViewState.CurrentView.today, selection: $nav.activeView) {
                             Label("Today", systemImage: "clock")
                         }
 
-                        NavigationLink(destination: WeeklyView(date: Date()).frame(minWidth: 350), tag: ActiveView.thisWeek, selection: $activeView) {
+                        NavigationLink(destination: WeeklyView(date: Date()).frame(minWidth: 350), tag: NavigationViewState.CurrentView.thisWeek, selection: $nav.activeView) {
                             Label("This Week", systemImage: "calendar")
                         }
 
-                        NavigationLink(destination: WeeklyView(date: Date().lastWeek()).frame(minWidth: 350), tag: ActiveView.lastWeek, selection: $activeView) {
+                        NavigationLink(destination: WeeklyView(date: Date().lastWeek()).frame(minWidth: 350), tag: NavigationViewState.CurrentView.lastWeek, selection: $nav.activeView) {
                             Label("Last Week", systemImage: "calendar")
                         }
                     }

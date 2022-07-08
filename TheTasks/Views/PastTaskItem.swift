@@ -39,6 +39,8 @@ struct PastTaskItem: View {
                     .foregroundColor(completion == .notCompleted ? .primary : .secondary)
             } icon: {
                 TaskIcon(status: task.status)
+                    .frame(width: 30)
+                    .font(.title2)
             }
             Spacer()
             DateView(date: task.completed, format: .timeHourMinute)
