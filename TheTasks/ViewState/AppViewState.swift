@@ -23,13 +23,27 @@ final class AppViewState: NSObject, ObservableObject { // NSObject required for 
     // MARK: - Publishers
 
     @Published var tasks = [TheTask]()
-    @Published var focusDate = Date()
     @Published var showAlert = false
     @Published var error: Error?
+
+    // Filters
+
+    @Published var showCompleted = true {
+        didSet {
+            refilter()
+        }
+    }
+
+    @Published var showAll = false {
+        didSet {
+            refilter()
+        }
+    }
 
     @Published var selectedTask: TheTask.ID?
     @Published var focusedTask: FocusTask?
 
+    // TODO: Make this a struct
     @Published var cancelledTasks = 0
     @Published var completedTasks = 0
     @Published var totalTasks = 0
@@ -45,15 +59,10 @@ final class AppViewState: NSObject, ObservableObject { // NSObject required for 
         super.init()
         self.cursor.delegate = self
 
-        self.$focusDate
-            .removeDuplicates()
-            .sink { [weak self] newDate in
-                self?.refocusTasks(on: newDate)
-            }
-
-            .store(in: &subscribers)
-        self.gotoToday()
-        self.reload()
+        self.cursor.fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "created", ascending: false)
+        ]
+        self.refilter()
     }
 }
 
@@ -61,31 +70,7 @@ final class AppViewState: NSObject, ObservableObject { // NSObject required for 
 
 extension AppViewState {
 
-    var isFocusedOnToday: Bool {
-        Calendar.current.isDateInToday(focusDate)
-    }
-
-    func gotoToday() {
-        focusDate = Calendar.current.startOfDay(for: Date())
-    }
-
-    func goBackOneDay() {
-        let current = Calendar.current.startOfDay(for: self.focusDate)
-        if let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: current) {
-            self.focusDate = yesterday
-        }
-    }
-
-    func goForwardOneDay() {
-        if isFocusedOnToday {
-            return
-        }
-        let current = Calendar.current.startOfDay(for: self.focusDate)
-        if let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: current) {
-            self.focusDate = tomorrow
-        }
-    }
-
+    /// Update a task's name.
     func update(task id: UUID, name: String) {
         Task {
             do {
@@ -96,6 +81,7 @@ extension AppViewState {
         }
     }
 
+    /// Update a tasks's status.
     func update(task id: UUID, status: TaskMO.TaskStatus) {
         Task {
             do {
@@ -119,12 +105,6 @@ extension AppViewState {
 
     func createNewTask() {
         let newTask = TheTask(newTask: "New task")
-        if !isFocusedOnToday {
-            // You can create a new task whenever you want, but always make sure "Today" is visible before adding it to the list of today's task list.
-            Task {
-                self.gotoToday()
-            }
-        }
         Task {
             do {
                 try await TaskManager.shared.insert(task: newTask)
@@ -170,27 +150,21 @@ extension AppViewState {
         self.showAlert = true
     }
 
-    private func refocusTasks(on date: Date) {
-        let fromDate = Calendar.current.startOfDay(for: date)
+    private func refilter() {
+        let fromDate = Calendar.current.startOfDay(for: Date())
         let toDate = Calendar.current.date(byAdding: .day, value: 1, to: fromDate)!
 
-        if Calendar.current.isDateInToday(date) {
-            self.cursor.fetchRequest.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
-                NSPredicate(format: "status == 'pending'"),
-                NSPredicate(format: "completed >= %@ and completed <= %@", fromDate as NSDate, toDate as NSDate)
-            ])
+        let completedToday = NSPredicate(format: "completed >= %@ and completed <= %@", fromDate as NSDate, toDate as NSDate)
+        let available = NSPredicate(format: "status == 'pending'")
 
-            self.cursor.fetchRequest.sortDescriptors = [
-                NSSortDescriptor(key: "status", ascending:  false),
-                NSSortDescriptor(key: "created", ascending: true)
-            ]
+        if showAll {
+            cursor.fetchRequest.predicate = nil
+        } else if showCompleted {
+            cursor.fetchRequest.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [completedToday, available])
         } else {
-            self.cursor.fetchRequest.predicate = NSPredicate(format: "completed >= %@ and completed <= %@", fromDate as NSDate, toDate as NSDate)
-
-            self.cursor.fetchRequest.sortDescriptors = [
-                NSSortDescriptor(key: "completed", ascending: true)
-            ]
+            cursor.fetchRequest.predicate = available
         }
+
         reload()
     }
 }

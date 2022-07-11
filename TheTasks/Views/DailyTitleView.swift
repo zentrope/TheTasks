@@ -12,20 +12,9 @@ struct DailyTitleView: View {
 
     var body: some View {
         HStack(alignment: .center) {
-
-            if date.isToday() {
-                Text("Today")
-                    .font(.taskHeading)
-                    .foregroundColor(.red)
-            } else if date.isYesterday() {
-                Text("Yesterday")
-                    .font(.taskHeading)
-                    .foregroundColor(.purple)
-            } else {
-                DateView(date: date, format: .weekdayName)
-                    .font(.system(.largeTitle, design: .rounded).bold())
-                    .foregroundColor(.accentColor)
-            }
+            Text("Available")
+                .font(.taskHeading)
+                .foregroundColor(.accentColor)
 
             Spacer()
             DateView(date: date, format: .dateNameMedium)

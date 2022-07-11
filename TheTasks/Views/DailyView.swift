@@ -13,82 +13,45 @@ struct DailyView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            DailyTitleView(date: state.focusDate)
+            DailyTitleView(date: Date())
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.background)
 
             List(selection: $state.selectedTask) {
                 ForEach(state.tasks, id: \.id) { task in
-                    if state.isFocusedOnToday {
-                        TaskItemView(task: task)
-                            .padding(4)
-                    } else {
-                        PastTaskItem(task: task, focusDate: state.focusDate)
-                            .padding(4)
-                    }
+                    TaskItemView(task: task)
+                        .padding(2)
                 }
             }
-
+            
             TaskStatsView()
         }
         .listStyle(.inset(alternatesRowBackgrounds: false))
         .frame(minWidth: 350, idealWidth: 350)
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
-        .toolbar { [unowned state] in
-            // Using unowned here because I head a rumor that .toolbar retains stuff. Doing this seems to reduce memory leaks when the view is re-created after being completely swapped out. Declaring toolbar items inline here is worse.
-            TodayToolbar(state: state)
-        }
 
-    }
+        .toolbar {
 
-    @State private var selectedDate: Date = Date()
-    @State private var showPicker = false
-
-    @available(macOS, deprecated: 13, message: "Verify toolbar workaround still necessary")
-    @ToolbarContentBuilder
-    func TodayToolbar(state: AppViewState) -> some ToolbarContent {
-        // Using this rather than in-lining the toolbar items seems to prevent the memory leak that happens when the toolbar is recreated after switch back from another view in the application. Revisit this with macos 13.
-
-        ToolbarItemGroup {
             Button(action: { state.createNewTask() }, label: { Image(systemName: "plus") })
 
-            Button {
-                showPicker.toggle()
-            } label: {
-                Image(systemName: "calendar")
-
-            }
-            .popover(isPresented: $showPicker) {
-                VStack(alignment: .center, spacing: 10) {
-                    DatePicker("", selection: $selectedDate, displayedComponents: .date)
-                        .labelsHidden()
-                        .datePickerStyle(.graphical)
-                    Button {
-                        state.gotoToday()
-                    } label: {
-                        Label("Today", systemImage: "calendar")
-                    }
-                }
-                .padding()
-            }
-            .onChange(of: selectedDate) { newDate in
-                // TODO: get rid of state.focusDate
-                state.focusDate = newDate
-            }
-
             Spacer()
-            ControlGroup {
-                Button(action: { state.goBackOneDay() }, label: { Image(systemName: "chevron.backward") })
-                    .help("Show yesterday's tasks")
 
-                Button("Today", action: { state.gotoToday() })
-                    .help("Show today's tasks")
-
-                Button(action: { state.goForwardOneDay() }, label: { Image(systemName: "chevron.forward") })
-                    .help("Show tomorrow's tasks")
-                    .disabled(state.isFocusedOnToday)
+            // Using toggles like this doesn't feel like the right way to go, but leaving this in until I see something better. I think a segmented controll for all, today and today+completed is more reasonable.
+            Toggle(isOn: $state.showCompleted) {
+                // MACOS13: use checklist.checked and checklist.unchecked
+                Image(systemName: state.showCompleted ? "checkmark.circle.fill" : "checkmark.circle")
+                    .foregroundColor(state.showCompleted ? .blue : .secondary)
+                    .frame(width: 15)
             }
+            .help(state.showCompleted ? "Hide completed" : "Show completed")
+
+            Toggle(isOn: $state.showAll) {
+                Image(systemName: state.showAll ? "clock" : "calendar")
+                    .foregroundColor(state.showAll ? .blue : .secondary)
+                    .frame(width: 15)
+            }
+            .help(state.showAll ? "Show today's tasks" : "Show all tasks")
         }
     }
 }

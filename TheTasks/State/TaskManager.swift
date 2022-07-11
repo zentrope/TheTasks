@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 import OSLog
 
-fileprivate let log = Logger("TheTaskManager")
+fileprivate let log = Logger("TaskManager")
 
 struct TaskManager {
 
@@ -75,10 +75,10 @@ struct TaskManager {
         }
     }
 
-    func taskCursor() -> NSFetchedResultsController<TaskMO> {
+    func taskCursor(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) -> NSFetchedResultsController<TaskMO> {
         let request = TaskMO.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "created", ascending: true)]
-        return NSFetchedResultsController(fetchRequest: request, managedObjectContext: controller.container.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        return NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
     }
 
     func numberOfTasks(withStatus status: TaskMO.TaskStatus? = nil) throws -> Int {
@@ -87,6 +87,48 @@ struct TaskManager {
             fetch.predicate = NSPredicate(format: "status = %@", status.rawValue)
         }
         return try controller.container.viewContext.count(for: fetch)
+    }
+
+
+    func removeDuplicates() async throws {
+
+        // This is necessary due something going wrong with CloudKit integration, or a bug on my part. CloudKit integration does not allow uniqueness constraints, so it's possible that an incoming update will duplicate items. Or maybe it was just the one time.
+
+        log.info("Invoking remove duplicates function.")
+        let context = controller.newBackgroundContext()
+        try await context.perform {
+            let cursor = taskCursor(context: context)
+            try cursor.performFetch()
+
+            var checker = [UUID:[TaskMO]]()
+
+            for task in (cursor.fetchedObjects ?? []) {
+                if let matchList = checker[task.id] {
+                    checker[task.id] = matchList + [task]
+                } else {
+                    checker[task.id] = [task]
+                }
+            }
+
+            if checker.isEmpty {
+                log.debug("No duplicate tasks found.")
+                return
+            }
+
+            for duplicates in checker.values {
+                if duplicates.count == 1 {
+                    continue
+                }
+
+                for index in (1..<duplicates.count) {
+                    let taskMO = duplicates[index]
+                    log.debug("Removing instance \(index) of \(duplicates.count) of task \(taskMO.id).")
+                    context.delete(taskMO)
+                }
+            }
+
+            try context.commit()
+        }
     }
 }
 
@@ -99,14 +141,5 @@ extension TaskManager {
             return theTask
         }
         throw PersistenceError.taskNotFound
-    }
-}
-
-fileprivate extension NSManagedObjectContext {
-
-    func commit() throws {
-        if hasChanges {
-            try save()
-        }
     }
 }

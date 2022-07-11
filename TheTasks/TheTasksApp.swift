@@ -43,8 +43,8 @@ struct TheTasksApp: App {
             // View menu
             CommandGroup(before: .sidebar) {
 
-                Button("Today") {
-                    NotificationCenter.default.navigateTo(view: .today)
+                Button("Available") {
+                    NotificationCenter.default.navigateTo(view: .available)
                 }
                 .keyboardShortcut("1", modifiers: [.command])
 

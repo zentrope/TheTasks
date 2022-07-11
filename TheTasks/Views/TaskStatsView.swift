@@ -43,7 +43,17 @@ struct TaskStatsView: View {
                 Text("\(state.cancelledTasks)")
                     .foregroundColor(.blue)
             }
+
             Spacer()
+
+            // TODO: This should be in Settings along with diagnostics of some sort
+//            Button {
+//                Task {
+//                    try await TaskManager.shared.removeDuplicates()
+//                }
+//            } label: {
+//                Image(systemName: "cross.case")
+//            }
         }
         .fixedSize(horizontal: false, vertical: true)
         .lineLimit(1)

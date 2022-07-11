@@ -29,6 +29,7 @@ struct TaskItemView: View {
                 EditableText(text: task.task, onChange: { state.update(task: task.id, name: $0) })
                     .focused($focus, equals: .task(task.id))
                     .font(task.status == .cancelled ? .body.weight(.thin).italic() : task.status == .completed ? .callout.weight(.thin).italic() : .body)
+                    .foregroundColor(task.status == .pending ? .primary : .secondary)
             } icon: {
                 Image(systemName: icon)
                     .font(.title2)
@@ -129,7 +130,7 @@ struct TaskItemView: View {
         switch task.status {
             case .pending: return .green
             case .cancelled: return Color.brown
-            case .completed: return .gray
+            case .completed: return Color.secondary
         }
     }
 }
