@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21223.12" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21256.2" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="TagMO" representedClassName="TagMO" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaskMO" inverseName="tags" inverseEntity="TaskMO"/>
+    </entity>
     <entity name="TaskMO" representedClassName="TaskMO" syncable="YES">
         <attribute name="completed" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -7,8 +12,6 @@
         <attribute name="isExportable" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="status" optional="YES" attributeType="String"/>
         <attribute name="task" optional="YES" attributeType="String" defaultValueString="New task"/>
+        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TagMO" inverseName="tasks" inverseEntity="TagMO"/>
     </entity>
-    <elements>
-        <element name="TaskMO" positionX="-63" positionY="-9" width="128" height="119"/>
-    </elements>
 </model>

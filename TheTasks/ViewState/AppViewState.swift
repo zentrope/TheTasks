@@ -34,7 +34,7 @@ final class AppViewState: NSObject, ObservableObject { // NSObject required for 
         }
     }
 
-    @Published var showAll = false {
+    @Published var showToday = true {
         didSet {
             refilter()
         }
@@ -70,6 +70,16 @@ final class AppViewState: NSObject, ObservableObject { // NSObject required for 
 
 extension AppViewState {
 
+    func add(tag: TagManager.Tag, to task: TheTask) {
+        log.debug("add tag: \(tag.name) to task '\(task.task)'.")
+        Task {
+            do {
+                try await TaskManager.shared.add(tag: tag, to: task)
+            } catch (let error) {
+                showAlert(error)
+            }
+        }
+    }
     /// Update a task's name.
     func update(task id: UUID, name: String) {
         Task {
@@ -157,7 +167,7 @@ extension AppViewState {
         let completedToday = NSPredicate(format: "completed >= %@ and completed <= %@", fromDate as NSDate, toDate as NSDate)
         let available = NSPredicate(format: "status == 'pending'")
 
-        if showAll {
+        if !showToday {
             cursor.fetchRequest.predicate = nil
         } else if showCompleted {
             cursor.fetchRequest.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [completedToday, available])

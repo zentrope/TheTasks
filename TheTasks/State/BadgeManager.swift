@@ -75,6 +75,7 @@ class BadgeManager: NSObject, NSFetchedResultsControllerDelegate {
             log.debug("Requesting authorization for badge access.")
             if success {
                 log.debug("Authorization for badge access granted.")
+                Task { self.update() }
             } else if let error = error {
                 log.error("Unable to get authorization for badge access: \(String(describing: error.localizedDescription))")
             }

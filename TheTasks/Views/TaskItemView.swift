@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct TaskItemView: View {
 
@@ -17,6 +18,7 @@ struct TaskItemView: View {
 
     @State private var confirmDelete = false
     @State private var title: String
+    @State private var isTargeted = false
 
     init(task: TheTask) {
         self.task = task
@@ -46,45 +48,41 @@ struct TaskItemView: View {
                         state.update(task: task.id, status: task.status == .completed ? .pending : .completed)
                     }
             }
-
             Spacer()
-            Group {
-                switch task.status {
-                    case .cancelled:
-                        DateView(date: task.completed, format: .nameMonthDayYear)
-                    case .completed:
-                        DateView(date: task.completed, format: .nameMonthDayYear)
-                    case .pending:
-                        DateView(date: task.created, format: .timeSince)
+            HStack {
+                ForEach(task.tags, id: \.id) { tag in
+                    TagView(tag: tag)
+                        .font(.caption)
                 }
             }
-            .font(task.status == .cancelled ? .caption.weight(.thin).italic() : task.status == .completed ? .caption.weight(.thin).italic() : .callout)
+        }
+        .padding([.horizontal], 5)
+        .overlay(RoundedRectangle(cornerRadius: 4, style: .continuous).stroke(isTargeted ? .blue : .clear, lineWidth: 2))
+
+        .onDrop(of: [UTType.tag.identifier], isTargeted: $isTargeted) { providers in
+            for p in providers {
+                p.loadObject(ofClass: TagManager.Draggable.self) { draggable, _ in
+                    if let draggable = draggable as? TagManager.Draggable {                        
+                        state.add(tag: draggable.tag, to: task)
+                    }
+                }
+            }
+            return true
         }
         .confirmationDialog("Delete '\(task.task)'?", isPresented: $confirmDelete) {
             Button("Delete") {
                 state.delete(task: task.id)
             }
         }
-        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-            if task.status == .cancelled {
-                Button(role: .none) {
-                    state.update(task: task.id, status: .pending)
-                } label: {
-                    Text("Restore")
-                }
-            } else {
-                Button(role: .cancel) {
-                    state.update(task: task.id, status: .cancelled)
-                } label: {
-                    Text("Cancel")
-                }
-            }
-        }
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            Button(role: .destructive) {
-                state.delete(task: task.id)
+            Button(role: task.status == .completed ? .none : .destructive) {
+                state.update(task: task.id, status: task.status == .completed ? .pending : .completed)
             } label: {
-                Text("Delete")
+                Label {
+                    Text(task.status == .completed ? "Available" : "Complete")
+                } icon: {
+                    Image(systemName: task.status == .completed ? "circle" : "checkmark.circle")
+                }
             }
         }
         .contextMenu {
@@ -110,7 +108,6 @@ struct TaskItemView: View {
             Divider()
             Button("Delete") {
                 confirmDelete.toggle()
-
             }
         }
         .onChange(of: state.focusedTask) { newFocus in

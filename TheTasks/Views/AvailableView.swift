@@ -1,5 +1,5 @@
 //
-//  DailyView.swift
+//  AvailableView.swift
 //  TheTasks
 //
 //  Created by Keith Irwin on 6/22/22.
@@ -7,13 +7,16 @@
 
 import SwiftUI
 
-struct DailyView: View {
+struct AvailableView: View {
 
     @EnvironmentObject private var state: AppViewState
-
+    
     var body: some View {
         VStack(spacing: 0) {
-            DailyTitleView(date: Date())
+            //DailyTitleView(date: Date())
+            Text("Available")
+                .font(.taskHeading)
+                .foregroundColor(.accentColor)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.background)
@@ -21,7 +24,7 @@ struct DailyView: View {
             List(selection: $state.selectedTask) {
                 ForEach(state.tasks, id: \.id) { task in
                     TaskItemView(task: task)
-                        .padding(2)
+                        .padding(2)                        
                 }
             }
             
@@ -41,23 +44,21 @@ struct DailyView: View {
             Toggle(isOn: $state.showCompleted) {
                 // MACOS13: use checklist.checked and checklist.unchecked
                 Image(systemName: state.showCompleted ? "checkmark.circle.fill" : "checkmark.circle")
-                    .foregroundColor(state.showCompleted ? .blue : .secondary)
                     .frame(width: 15)
             }
-            .help(state.showCompleted ? "Hide completed" : "Show completed")
+            .help("Show completed")
 
-            Toggle(isOn: $state.showAll) {
-                Image(systemName: state.showAll ? "clock" : "calendar")
-                    .foregroundColor(state.showAll ? .blue : .secondary)
+            Toggle(isOn: $state.showToday) {
+                Image(systemName: state.showToday ? "clock.fill" : "clock")
                     .frame(width: 15)
             }
-            .help(state.showAll ? "Show today's tasks" : "Show all tasks")
+            .help("Show today only")
         }
     }
 }
 
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
-        DailyView()
+        AvailableView()
     }
 }

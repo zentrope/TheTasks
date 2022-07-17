@@ -15,6 +15,7 @@ struct TheTask: Identifiable, Equatable {
     var completed: Date?
     var isExportable: Bool
     var status: TaskMO.TaskStatus
+    var tags: [TagManager.Tag]
 
     init(newTask: String) {
         self.id = UUID()
@@ -23,6 +24,7 @@ struct TheTask: Identifiable, Equatable {
         self.completed = nil
         self.status = .pending
         self.isExportable = false
+        self.tags = []
     }
 
     init(mo task: TaskMO) {
@@ -32,5 +34,10 @@ struct TheTask: Identifiable, Equatable {
         self.completed = task.completed
         self.status = task.taskStatus
         self.isExportable = task.isExportable
+
+        self.tags = ((task.tags?.allObjects as? [TagMO]) ?? [])
+            .map { TagManager.Tag(mo: $0) }
+            .sorted(using: KeyPathComparator(\.name, order: .forward))
+
     }
 }
