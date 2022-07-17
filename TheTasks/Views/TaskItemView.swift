@@ -5,38 +5,37 @@
 //  Created by Keith Irwin on 6/19/22.
 //
 
+import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 
+enum TaskItemEvent {
+    case delete(TheTask)
+    case save(TheTask)
+    case complete(TheTask)
+    case pending(TheTask)
+    case remove(tag: TagManager.Tag, from: TheTask)
+    case add(tag: TagManager.Tag, to: TheTask)
+}
+
 struct TaskItemView: View {
 
-    var task: TheTask
+    @Binding var task: TheTask
 
-    @EnvironmentObject private var state: AppViewState
+    var action: ((TaskItemEvent) -> ())?
 
-    @FocusState private var focus: FocusTask?
+    @State private var isTargetedForDrop = false
+    @State private var originalText = ""
+    @FocusState private var isFocused: Bool?
 
-    @State private var confirmDelete = false
-    @State private var title: String
-    @State private var isTargeted = false
-
-    init(task: TheTask) {
-        self.task = task
-        self._title = State(initialValue: task.task)
-    }
+    private let queue = PassthroughSubject<String, Never>()
 
     var body: some View {
-        HStack(alignment: .center, spacing: 0) {
-            Label {
-                EditableText(text: task.task, onChange: { state.update(task: task.id, name: $0) })
-                    .focused($focus, equals: .task(task.id))
-                    .font(task.status == .cancelled ? .body.weight(.thin).italic() : task.status == .completed ? .callout.weight(.thin).italic() : .body)
-                    .foregroundColor(task.status == .pending ? .primary : .secondary)
-            } icon: {
-                Image(systemName: icon)
+        HStack { // Wrapper HSTack is so that the context menu covers whitespace but doesn't interfere with the onDrop/isTargeted background. Sigh.
+            HStack (alignment: .center, spacing: 10) {
+                TaskClickIcon(status: task.status)
+                    .frame(width: 20, alignment: .leading)
                     .font(.title2)
-                    .foregroundColor(color)
-                    .frame(width: 30, alignment: .center)
                     .onHover { inside in
                         if inside {
                             NSCursor.pointingHand.push()
@@ -45,78 +44,105 @@ struct TaskItemView: View {
                         }
                     }
                     .onTapGesture {
-                        state.update(task: task.id, status: task.status == .completed ? .pending : .completed)
+                        action?(pending ? .complete(task) : .pending(task))
                     }
-            }
-            Spacer()
-            HStack {
-                ForEach(task.tags, id: \.id) { tag in
-                    TagView(tag: tag)
-                        .font(.caption)
-                }
-            }
-        }
-        .padding([.horizontal], 5)
-        .overlay(RoundedRectangle(cornerRadius: 4, style: .continuous).stroke(isTargeted ? .blue : .clear, lineWidth: 2))
 
-        .onDrop(of: [UTType.tag.identifier], isTargeted: $isTargeted) { providers in
-            for p in providers {
-                p.loadObject(ofClass: TagManager.Draggable.self) { draggable, _ in
-                    if let draggable = draggable as? TagManager.Draggable {                        
-                        state.add(tag: draggable.tag, to: task)
+                if task.isEditable {
+                    TextField("", text: $task.task)
+                        .labelsHidden()
+                        .onChange(of: task.task) { newName in
+                            queue.send(newName)
+                        }
+                        .onReceive(queue.debounce(for: .seconds(1), scheduler: DispatchQueue.main).removeDuplicates()) { text in
+                            action?(.save(task))
+                        }
+                        .onSubmit {
+                            task.toggleEditMode()
+                            action?(.save(task))
+                        }
+                        .onExitCommand(perform: {
+                            task.toggleEditMode()
+                            task.task = originalText
+                            action?(.save(task))
+                        })
+                        .focused($isFocused, equals: true)
+                        .onAppear {
+                            self.originalText = task.task
+                            isFocused = true
+                        }
+                } else {
+                    Text(task.task)
+                        .foregroundColor(pending ? .primary : .secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 2.5)
+                        .padding(.horizontal, 4)
+                }
+
+                HStack {
+                    ForEach(task.tags, id: \.id) { tag in
+                        TagBadgeView(tag: tag)
+                            .font(.caption)
+                            .contextMenu {
+                                Button("Remove \"\(tag.name)\" Tag") {
+                                    action?(.remove(tag: tag, from: task))
+                                }
+                            }
                     }
                 }
             }
-            return true
-        }
-        .confirmationDialog("Delete '\(task.task)'?", isPresented: $confirmDelete) {
-            Button("Delete") {
-                state.delete(task: task.id)
-            }
-        }
-        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            Button(role: task.status == .completed ? .none : .destructive) {
-                state.update(task: task.id, status: task.status == .completed ? .pending : .completed)
-            } label: {
-                Label {
-                    Text(task.status == .completed ? "Available" : "Complete")
-                } icon: {
-                    Image(systemName: task.status == .completed ? "circle" : "checkmark.circle")
+            .padding(.horizontal, 17)
+            .padding(.vertical, 2)
+            .background(isTargetedForDrop ? Color(nsColor: .quaternaryLabelColor) : Color.clear)
+
+            // The user might have clicked on some other part of the list, so force off edit mode.
+            .onChange(of: isFocused) { currentFocus in
+                guard let currentFocus, currentFocus == true else {
+                    task.toggleEditMode(force: false)
+                    return
                 }
             }
+
+            // This doesn't match the List-based highlight.
+            .clipShape(RoundedRectangle(cornerRadius: 5, style: .circular))
+            .onDrop(of: [UTType.tag.identifier], isTargeted: $isTargetedForDrop) { providers in
+                for p in providers {
+                    p.loadObject(ofClass: TagManager.Draggable.self) { draggable, _ in
+                        if let draggable = draggable as? TagManager.Draggable {
+                            action?(.add(tag: draggable.tag, to: task))
+                        }
+                    }
+                }
+                return true
+            }
         }
+        .background(.background)
         .contextMenu {
-            if task.status == .completed {
-                Button("Mark uncompleted") {
-                    state.update(task: task.id, status: .pending)
-                }
-            } else if task.status == .cancelled {
-                Button("Uncancel") {
-                    state.update(task: task.id, status: .pending)
-                }
-                Button("Complete") {
-                    state.update(task: task.id, status: .completed)
-                }
+            Button("Rename Task") { task.toggleEditMode() }
+            if pending {
+                Button("Complete Task") { action?(.complete(task)) }
             } else {
-                Button("Complete") {
-                    state.update(task: task.id, status: .completed)
-                }
-                Button("Cancel") {
-                    state.update(task: task.id, status: .cancelled)
-                }
+                Button("Mark Task Available") { action?(.pending(task)) }
             }
             Divider()
-            Button("Delete") {
-                confirmDelete.toggle()
-            }
-        }
-        .onChange(of: state.focusedTask) { newFocus in
-            focus = newFocus
+            Button("Delete Task") { action?(.delete(task)) }
         }
     }
 
+    private var pending: Bool {
+        task.status == .pending
+    }
+}
+
+struct TaskClickIcon: View {
+    var status: TaskMO.TaskStatus
+
+    var body: some View {
+        Image(systemName: icon)
+            .foregroundColor(color)
+    }
+
     private var icon: String {
-        switch task.status {
+        switch status {
             case .pending: return "circle"
             case .cancelled: return "circle.slash"
             case .completed: return "checkmark.circle"
@@ -124,16 +150,10 @@ struct TaskItemView: View {
     }
 
     private var color: Color {
-        switch task.status {
+        switch status {
             case .pending: return .green
             case .cancelled: return Color.brown
             case .completed: return Color.secondary
         }
     }
 }
-
-//struct TaskItemView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        TaskItemView(task: .init(newTask: "Test task description"))
-//    }
-//}

@@ -37,15 +37,12 @@ struct ContentView: View {
 
                     Section(header: Text("Context")) {
                         ForEach($state.tags, id: \.id) { $tag in
-                            // Note: HStack is required here so that onDrag and contextMenu are on separate elements, otherwise one will cancel out the other.
-                            HStack {
-                                EditableTag(tag: $tag) { state.rename(tag: tag, name: $0) }
-                                    .onDrag { NSItemProvider(object: tag.draggable())}
-                            }
-                            .contextMenu {
-                                Button(#"Rename "\#(tag.name)""#) { tag.toggleEditMode() }
-                                Button("Delete") { state.delete(tag: tag) }
-                            }
+                            EditableTag(tag: $tag) { state.rename(tag: tag, name: $0) }
+                                .onDrag { NSItemProvider(object: tag.draggable())}
+                                .contextMenu {
+                                    Button(#"Rename "\#(tag.name)""#) { tag.toggleEditMode() }
+                                    Button("Delete") { state.delete(tag: tag) }
+                                }
                         }
                     }
                 }

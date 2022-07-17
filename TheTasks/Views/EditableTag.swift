@@ -26,11 +26,9 @@ struct EditableTag: View {
                     .onChange(of: tag.name) { newName in
                         queue.send(newName)
                     }
-                    .onReceive(queue
-                        .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
-                        .removeDuplicates()) { text in
-                            perform?(text)
-                        }
+                    .onReceive(queue.debounce(for: .seconds(1), scheduler: DispatchQueue.main).removeDuplicates()) { text in
+                        perform?(text)
+                    }
                     .onSubmit {
                         tag.toggleEditMode()
                         perform?(tag.name)
@@ -38,7 +36,7 @@ struct EditableTag: View {
                     .focused($isFocused, equals: true)
                     .onAppear {
                         isFocused = true
-                    }                    
+                    }
             } else {
                 Text(tag.name)
             }

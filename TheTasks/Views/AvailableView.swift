@@ -6,14 +6,18 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct AvailableView: View {
 
     @EnvironmentObject private var state: AppViewState
-    
+
+    @State private var confirmDelete = false
+    @State private var taskToDelete: TheTask?
+
     var body: some View {
         VStack(spacing: 0) {
-            //DailyTitleView(date: Date())
+
             Text("Available")
                 .font(.taskHeading)
                 .foregroundColor(.accentColor)
@@ -21,16 +25,25 @@ struct AvailableView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.background)
 
-            List(selection: $state.selectedTask) {
-                ForEach(state.tasks, id: \.id) { task in
-                    TaskItemView(task: task)
-                        .padding(2)                        
+            ScrollView {
+                ForEach($state.tasks, id: \.id) { $task in
+                    HStack {
+                        TaskItemView(task: $task, action: handleTaskEvent)
+                            .lineLimit(1)
+                    }
+                    .confirmationDialog("Delete '\(taskToDelete?.task ?? "Unknown")'?", isPresented: $confirmDelete) {
+                        Button("Delete") {
+                            if let taskToDelete {
+                                state.delete(task: taskToDelete.id)
+                            }
+                        }
+                    }
                 }
             }
-            
+            .listStyle(.inset(alternatesRowBackgrounds: false))
             TaskStatsView()
         }
-        .listStyle(.inset(alternatesRowBackgrounds: false))
+
         .frame(minWidth: 350, idealWidth: 350)
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
 
@@ -53,6 +66,24 @@ struct AvailableView: View {
                     .frame(width: 15)
             }
             .help("Show today only")
+        }
+    }
+
+    private func handleTaskEvent(_ event: TaskItemEvent) {
+        switch event {
+            case .save(let task):
+                state.update(task: task.id, name: task.task)
+            case .delete(let task):
+                taskToDelete = task
+                confirmDelete.toggle()
+            case .complete(let task):
+                state.update(task: task.id, status: .completed)
+            case .pending(let task):
+                state.update(task: task.id, status: .pending)
+            case .remove(tag: let tag, from: let task):
+                state.remove(tag: tag, from: task)
+            case .add(tag: let tag, to: let task):
+                state.add(tag: tag, to: task)
         }
     }
 }

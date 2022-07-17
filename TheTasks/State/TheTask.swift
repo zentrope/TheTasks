@@ -17,6 +17,8 @@ struct TheTask: Identifiable, Equatable {
     var status: TaskMO.TaskStatus
     var tags: [TagManager.Tag]
 
+    var isEditable = false
+
     init(newTask: String) {
         self.id = UUID()
         self.task = newTask
@@ -38,6 +40,13 @@ struct TheTask: Identifiable, Equatable {
         self.tags = ((task.tags?.allObjects as? [TagMO]) ?? [])
             .map { TagManager.Tag(mo: $0) }
             .sorted(using: KeyPathComparator(\.name, order: .forward))
+    }
 
+    mutating func toggleEditMode(force: Bool? = nil) {
+        if let force {
+            isEditable = force
+            return
+        }
+        isEditable.toggle()
     }
 }

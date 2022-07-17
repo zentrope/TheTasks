@@ -70,16 +70,24 @@ final class AppViewState: NSObject, ObservableObject { // NSObject required for 
 
 extension AppViewState {
 
-    func add(tag: TagManager.Tag, to task: TheTask) {
-        log.debug("add tag: \(tag.name) to task '\(task.task)'.")
+    private func doTask(_ handler: @escaping () async throws -> Void) {
         Task {
             do {
-                try await TaskManager.shared.add(tag: tag, to: task)
+                try await handler()
             } catch (let error) {
                 showAlert(error)
             }
         }
     }
+
+    func add(tag: TagManager.Tag, to task: TheTask) {
+        doTask { try await TaskManager.shared.add(tag: tag, to: task) }
+    }
+
+    func remove(tag: TagManager.Tag, from task: TheTask) {
+        doTask { try await TaskManager.shared.remove(tag: tag, from: task) }
+    }
+
     /// Update a task's name.
     func update(task id: UUID, name: String) {
         Task {

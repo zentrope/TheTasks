@@ -18,6 +18,7 @@ struct TaskStatsView: View {
                 Text("Total:")
                 Text("\(state.totalTasks)")
                     .foregroundColor(.blue)
+                    .font(.callout.monospacedDigit())
             }
 
             Divider()
@@ -26,6 +27,7 @@ struct TaskStatsView: View {
                 Text("Pending:")
                 Text("\(state.pendingTasks)")
                     .foregroundColor(.red)
+                    .font(.callout.monospacedDigit())
             }
 
             Divider()
@@ -34,6 +36,7 @@ struct TaskStatsView: View {
                 Text("Completed:")
                 Text("\(state.completedTasks)")
                     .foregroundColor(.blue)
+                    .font(.callout.monospacedDigit())
             }
 
             Divider()
@@ -42,6 +45,7 @@ struct TaskStatsView: View {
                 Text("Cancelled:")
                 Text("\(state.cancelledTasks)")
                     .foregroundColor(.blue)
+                    .font(.callout.monospacedDigit())
             }
 
             Spacer()

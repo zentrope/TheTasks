@@ -32,6 +32,16 @@ struct TaskManager {
         }
     }
 
+    func remove(tag: TagManager.Tag, from task: TheTask) async throws {
+        let context = controller.newBackgroundContext()
+        try await context.perform {
+            let taskMO = try find(task: task.id, context: context)
+            let tagMO = try TagManager.shared.find(id: tag.id, context: context)
+            taskMO.removeFromTags(tagMO)            
+            try context.commit()
+        }
+    }
+
     func insert(task: TheTask) async throws {
         log.debug("inserting task: \(String(describing: task))")
         let context = controller.newBackgroundContext()
