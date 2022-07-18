@@ -59,7 +59,7 @@ struct TagManager {
         try await context.perform {
             let tagMO = TagMO(context: context)
             tagMO.id = tag.id
-            tagMO.name = tag.name
+            tagMO.name = tag.name.trimmingCharacters(in: .whitespacesAndNewlines)
             try context.commit()
         }
     }
@@ -76,12 +76,12 @@ struct TagManager {
     func rename(tag: Tag, name: String) async throws {
         let context = controller.newBackgroundContext()
         try await context.perform {
-            if isDuplicate(name: name, context: context) {
+            if isDuplicate(tag: tag, context: context) {
                 throw PersistenceError.tagAlreadyUsed
             }
 
             let tagMO = try find(id: tag.id, context: context)
-            tagMO.name = name
+            tagMO.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
             try context.commit()
         }
     }
@@ -92,10 +92,11 @@ struct TagManager {
         return NSFetchedResultsController(fetchRequest: request, managedObjectContext: controller.container.viewContext, sectionNameKeyPath: nil, cacheName: nil)
     }
 
-    private func isDuplicate(name: String, context: NSManagedObjectContext) -> Bool {
+    private func isDuplicate(tag: Tag, context: NSManagedObjectContext) -> Bool {
         do {
-            let _ = try find(name: name, context: context)
-            return true
+            let name = tag.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            let tagMO = try find(name: name, context: context)
+            return tagMO.id != tag.id
         } catch {
             return false
         }
@@ -103,7 +104,7 @@ struct TagManager {
 
     private func find(name: String, context: NSManagedObjectContext) throws -> TagMO {
         let request = TagMO.fetchRequest()
-        request.predicate = NSPredicate(format: "name ==[c] %@", name as CVarArg)
+        request.predicate = NSPredicate(format: "name ==[c] %@", name.trimmingCharacters(in: .whitespacesAndNewlines) as CVarArg)
         if let tag = try context.fetch(request).first {
             return tag
         }
