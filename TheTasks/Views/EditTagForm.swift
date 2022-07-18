@@ -20,10 +20,10 @@ struct EditTagForm: View {
                 Label {
                     Text("Update Tag")
                 } icon: {
-                    Image(systemName: "tag")
+                    Image(systemName: "tag.fill")
                         .foregroundColor(.accentColor)
                 }
-                .font(.title2)
+                .font(.title3)
             }
 
             Form {
@@ -42,6 +42,7 @@ struct EditTagForm: View {
                     Text("Cancel").frame(width: 50)
                 }
                 .keyboardShortcut(.cancelAction)
+                .controlSize(.small)
 
                 Button {
                     perform?(tag)
@@ -50,6 +51,7 @@ struct EditTagForm: View {
                     Text("Save").frame(width: 50)
                 }
                 .keyboardShortcut(.defaultAction)
+                .controlSize(.small)
             }
         }
         .padding()
