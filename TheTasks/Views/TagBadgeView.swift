@@ -15,11 +15,10 @@ struct TagBadgeView: View {
 
     var body: some View {
         Text(tag.name)
-            .foregroundColor(active ? .red : .accentColor)
             .padding(.horizontal, 4)
-            .padding(.vertical, 1)
-            .overlay(RoundedRectangle(cornerRadius: 4, style: .circular)
-                .stroke(active ? Color.red : Color.accentColor, lineWidth: 1))
+            .padding(.vertical, 2)
+            .background(Color(red: 0.9, green: 0.9, blue: 0.9).opacity(0.5))
+            .clipShape(RoundedRectangle(cornerRadius: 4, style: .circular))
             .onHover { over in
                 active.toggle()
                 if over { NSCursor.pointingHand.push() } else { NSCursor.pop() }

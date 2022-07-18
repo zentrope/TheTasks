@@ -40,6 +40,7 @@ struct AvailableView: View {
                     }
                 }
             }
+            .background(.background)
             .listStyle(.inset(alternatesRowBackgrounds: false))
             TaskStatsView()
         }

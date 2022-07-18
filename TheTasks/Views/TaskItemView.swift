@@ -117,7 +117,7 @@ struct TaskItemView: View {
         }
         .background(.background)
         .contextMenu {
-            Button("Rename Task") { task.toggleEditMode() }
+            Button("Edit Task") { task.toggleEditMode() }
             if pending {
                 Button("Complete Task") { action?(.complete(task)) }
             } else {

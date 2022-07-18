@@ -59,12 +59,13 @@ struct ContentView: View {
                     Button {
                         state.makeNewTask()
                     } label: {
-                        Label("New tag", systemImage: "plus.circle")
+                        Label("Add Tag", systemImage: "plus.circle")
                     }
                     .buttonStyle(.borderless)
                     Spacer()
                 }
-                .padding()
+                .padding(.horizontal, 13)
+                .padding(.bottom, 6)
 
                 .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
             }
