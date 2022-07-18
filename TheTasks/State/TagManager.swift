@@ -22,13 +22,17 @@ struct TagManager {
         self.controller = controller
     }
 
-    func insertNew() async throws {
+    @discardableResult
+    func insertNew() async throws -> TagManager.Tag? {
         let context = controller.newBackgroundContext()
+        let id = UUID()
+        var returnTag: TagManager.Tag?
         try await context.perform {
             var index = 1
-            let id = UUID()
+
             var name = "New Tag"
             var done = false
+
             while !done {
                 do {
                     let _ = try find(name: name, context: context)
@@ -39,11 +43,14 @@ struct TagManager {
                     let tagMO = TagMO(context: context)
                     tagMO.id = id
                     tagMO.name = name
+                    returnTag = TagManager.Tag(mo: tagMO)
                     done = true
                 }
             }
+
             try context.commit()
         }
+        return returnTag
     }
 
     func insert(tag: Tag) async throws {
@@ -188,36 +195,3 @@ extension TagManager {
     }
 
 }
-
-//
-//extension TagManager.Tag: NSItemProviderReading, NSItemProviderWriting {
-//
-//    static var writableTypeIdentifiersForItemProvider: [String] { ["task.tag"] }
-//    static var readableTypeIdentifiersForItemProvider: [String] { ["task.tag"] }
-//
-//    func object(withItemProdiderData data: Data, typeIdentifier: String) throws -> TagManager.Tag {
-//        let decoder = JSONDecoder()
-//        do {
-//            return try decoder.decode(TagManager.Tag.self, from: data)
-//        } catch {
-//            // TODO: This sucks, but will fix when we can move to the Transferable protocol with Macos13.
-//            fatalError("Error: \(error)")
-//        }
-//    }
-//
-//    func loadData(withTypeIdentifier typeIdentifier: String, forItemProviderCompletionHandler completionHandler: @escaping (Data?, Error?) -> Void) -> Progress? {
-//
-//        let progress = Progress(totalUnitCount: 100)
-//
-//        do {
-//            let encoder = JSONEncoder()
-//            let data = try encoder.encode(self)
-////            let json = String(data: data, encoding: .utf8)
-//            completionHandler(data, nil)
-//        } catch {
-//            completionHandler(nil, error)
-//        }
-//        return progress
-//    }
-//
-//}

@@ -44,42 +44,40 @@ class NavViewState: NSObject, ObservableObject, NSFetchedResultsControllerDelega
         subscriptions.forEach { $0.cancel() }
     }
 
-    func makeNewTask() {
-        Task {
-            do {
-                try await TagManager.shared.insertNew()
-            } catch (let error) {
-                show(alert: error)
-            }
+    func makeNewTask() async -> TagManager.Tag? {
+        do {
+            let newTag = try await TagManager.shared.insertNew()
+            return newTag
+        } catch (let error) {
+            show(alert: error)
+            return nil
         }
     }
 
     func rename(tag: TagManager.Tag, name: String) {
-        Task {
-            do {
-                try await TagManager.shared.rename(tag: tag, name: name.trimmingCharacters(in: .whitespacesAndNewlines))
-            } catch (let error) {
-                show(alert: error)
-            }
+        withTransaction {
+            try await TagManager.shared.rename(tag: tag, name: name.trimmingCharacters(in: .whitespacesAndNewlines))
         }
     }
 
     func delete(tag: TagManager.Tag) {
-        Task {
-            do {
-                try await TagManager.shared.delete(tag: tag)
-            } catch (let error) {
-                show(alert: error)
-            }
+        withTransaction {
+            try await TagManager.shared.delete(tag: tag)
         }
     }
 
     private func reload() {
+        withTransaction {
+            try self.cursor.performFetch()
+            let tags = ( self.cursor.fetchedObjects ?? [] ).map { TagManager.Tag(mo: $0) }
+            self.tags = tags
+        }
+    }
+
+    private func withTransaction(block: @escaping () async throws -> Void) {
         Task {
             do {
-                try cursor.performFetch()
-                let tags = ( cursor.fetchedObjects ?? [] ).map { TagManager.Tag(mo: $0) }
-                self.tags = tags
+                try await block()
             } catch (let error) {
                 show(alert: error)
             }

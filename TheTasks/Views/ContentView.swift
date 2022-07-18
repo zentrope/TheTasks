@@ -7,15 +7,19 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
-// The "new task" menu item tells AppViewState which enum to use, so we can switch to the right view. But that view will be the detail view, which won't exist (if we ditch global state), so how will it know to create a new task? The alternative is to allow for creating new tasks via a modal when not showing the daily view. Handler: if activeView == .today, then send the create task notification (I guess), otherwise create the modal. Something like that? Hm. Forcing the view to switch to Today when looking at another view is not good. So, modal it is.
+
+fileprivate struct TagOperation {
+    var tag = TagManager.Tag(name: "New Tag")
+    var presented = false
+}
 
 struct ContentView: View {
 
     @StateObject private var state = NavViewState()
 
-    @FocusState private var tagFocus: NavViewState.FocusTag?
-
     @State private var dropFocus = false
+    @State private var tagRenameOp = TagOperation()
+    @State private var tagDeleteOp = TagOperation()
 
     var body: some View {
         NavigationView {
@@ -36,13 +40,23 @@ struct ContentView: View {
                     }
 
                     Section(header: Text("Context")) {
-                        ForEach($state.tags, id: \.id) { $tag in
-                            EditableTag(tag: $tag) { state.rename(tag: tag, name: $0) }
-                                .onDrag { NSItemProvider(object: tag.draggable())}
-                                .contextMenu {
-                                    Button(#"Rename "\#(tag.name)""#) { tag.toggleEditMode() }
-                                    Button("Delete") { state.delete(tag: tag) }
+                        ForEach(state.tags, id: \.id) { tag in
+                            Label {
+                                Text(tag.name)
+                            } icon: {
+                                Image(systemName: "tag")
+                            }
+                            .onDrag { NSItemProvider(object: tag.draggable())}
+                            .contextMenu {
+                                Button("Rename Tag") {
+                                    tagRenameOp.tag = tag
+                                    tagRenameOp.presented.toggle()
                                 }
+                                Button("Delete Tag") {
+                                    tagDeleteOp.tag = tag
+                                    tagDeleteOp.presented.toggle()
+                                }
+                            }
                         }
                     }
                 }
@@ -57,7 +71,12 @@ struct ContentView: View {
                 Spacer()
                 HStack {
                     Button {
-                        state.makeNewTask()
+                        Task {
+                            if let newTag = await state.makeNewTask() {
+                                tagRenameOp.tag = newTag
+                                tagRenameOp.presented.toggle()
+                            }
+                        }
                     } label: {
                         Label("Add Tag", systemImage: "plus.circle")
                     }
@@ -70,6 +89,22 @@ struct ContentView: View {
                 .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
             }
             .frame(minWidth: 180, idealWidth: 180)
+
+            // When you want to edit a tag, you have to use a modal form.
+            .sheet(isPresented: $tagRenameOp.presented) {
+                EditTagForm(tag: $tagRenameOp.tag) { newTag in
+                    state.rename(tag: tagRenameOp.tag, name: newTag.name)
+                }
+            }
+
+            // When you want to delete a tag, you have to click through a warning about how destructive it is.
+            .confirmationDialog("Delete '\(tagDeleteOp.tag.name)'?", isPresented: $tagDeleteOp.presented) {
+                Button("Delete", role: .destructive) {
+                    state.delete(tag: tagDeleteOp.tag)
+                }
+            } message: {
+                Text("This will remove the tag from all tasks, completed or not.")
+            }
 
             Text("Pick a view")
         }
