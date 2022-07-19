@@ -47,6 +47,8 @@
 		53D51CB8287923B7005020CE /* TaskMO+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D51CB4287923B7005020CE /* TaskMO+CoreDataProperties.swift */; };
 		53D51CBA2879257E005020CE /* TagManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D51CB92879257E005020CE /* TagManager.swift */; };
 		53D51CBC287926DC005020CE /* NSManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D51CBB287926DC005020CE /* NSManagedObjectContext.swift */; };
+		53DC8010288625BC0069954B /* EditTaskForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DC800F288625BC0069954B /* EditTaskForm.swift */; };
+		53DC801228863BE20069954B /* EditTaskViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DC801128863BE20069954B /* EditTaskViewState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +114,8 @@
 		53D51CB4287923B7005020CE /* TaskMO+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "TaskMO+CoreDataProperties.swift"; path = "../../TaskMO+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		53D51CB92879257E005020CE /* TagManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagManager.swift; sourceTree = "<group>"; };
 		53D51CBB287926DC005020CE /* NSManagedObjectContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSManagedObjectContext.swift; sourceTree = "<group>"; };
+		53DC800F288625BC0069954B /* EditTaskForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskForm.swift; sourceTree = "<group>"; };
+		53DC801128863BE20069954B /* EditTaskViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskViewState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -241,6 +245,7 @@
 				5311359D2860041A00B165BD /* ContentView.swift */,
 				53294D10286027E90013AE5F /* DateView.swift */,
 				534FE32328850AE50057DE8D /* EditTagForm.swift */,
+				53DC800F288625BC0069954B /* EditTaskForm.swift */,
 				5326B9AB287212DF006CFCDE /* SettingsView.swift */,
 				536CBD4228838079003F3083 /* TagBadgeView.swift */,
 				53760EBC2870B5A900B0731E /* TaskIcon.swift */,
@@ -256,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				531135DC28600DBB00B165BD /* AppViewState.swift */,
+				53DC801128863BE20069954B /* EditTaskViewState.swift */,
 				536A50DC2878921200F99B84 /* NavViewState.swift */,
 				533A4DE82868276D007E3B3F /* WeeklyViewState.swift */,
 			);
@@ -410,10 +416,12 @@
 				531135D72860099900B165BD /* TaskManager.swift in Sources */,
 				531135DB28600BE700B165BD /* PersistenceError.swift in Sources */,
 				53D51CBA2879257E005020CE /* TagManager.swift in Sources */,
+				53DC801228863BE20069954B /* EditTaskViewState.swift in Sources */,
 				531135D52860072400B165BD /* TheTask.swift in Sources */,
 				533A4DEB28682C77007E3B3F /* WeeklyView.swift in Sources */,
 				531135CD2860047600B165BD /* Logger.swift in Sources */,
 				531135A82860041B00B165BD /* TheTasks.xcdatamodeld in Sources */,
+				53DC8010288625BC0069954B /* EditTaskForm.swift in Sources */,
 				537D0A162868DE3200B98E77 /* FileManager.swift in Sources */,
 				531135DD28600DBB00B165BD /* AppViewState.swift in Sources */,
 				531135A52860041B00B165BD /* PersistenceController.swift in Sources */,
@@ -592,7 +600,7 @@
 				CODE_SIGN_ENTITLEMENTS = TheTasks/TheTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1847;
+				CURRENT_PROJECT_VERSION = 2070;
 				DEVELOPMENT_ASSET_PATHS = "\"TheTasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -621,7 +629,7 @@
 				CODE_SIGN_ENTITLEMENTS = TheTasks/TheTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1847;
+				CURRENT_PROJECT_VERSION = 2070;
 				DEVELOPMENT_ASSET_PATHS = "\"TheTasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -649,7 +657,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1847;
+				CURRENT_PROJECT_VERSION = 2070;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
@@ -669,7 +677,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1847;
+				CURRENT_PROJECT_VERSION = 2070;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
@@ -687,7 +695,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1847;
+				CURRENT_PROJECT_VERSION = 2070;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -704,7 +712,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1847;
+				CURRENT_PROJECT_VERSION = 2070;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;

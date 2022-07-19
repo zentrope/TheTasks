@@ -48,11 +48,11 @@ struct ContentView: View {
                             }
                             .onDrag { NSItemProvider(object: tag.draggable())}
                             .contextMenu {
-                                Button("Rename Tag") {
+                                Button("Rename Tag…") {
                                     tagRenameOp.tag = tag
                                     tagRenameOp.presented.toggle()
                                 }
-                                Button("Delete Tag") {
+                                Button("Delete Tag…") {
                                     tagDeleteOp.tag = tag
                                     tagDeleteOp.presented.toggle()
                                 }

@@ -111,27 +111,21 @@ extension AppViewState {
         }
     }
 
-    func delete(task id: UUID) {
+    /// Upsert (create or update) a task
+    func upsert(task: TheTask) {
         Task {
             do {
-                try await TaskManager.shared.delete(task: id)
-            } catch (let error) {
-                showAlert(error)
+                try await TaskManager.shared.upsert(task: task)
+            } catch {
+                print("ERROR: \(error)")
             }
         }
     }
 
-    func createNewTask() {
-        let newTask = TheTask(newTask: "New task")
+    func delete(task id: UUID) {
         Task {
             do {
-                try await TaskManager.shared.insert(task: newTask)
-
-                Task {
-                    // Hack: Scheduling this update seems to keep the database update from interfering with selection, or something like that. This occurs after "reload()" triggered by the previous insert. If we do this without a delay, the reload seems to clobber the selection. Guess: this updates the main actor so it is suspended until the previous task is completed due to actor serialization. Guessing that when you call a main-actor method from within the actor, the call is not serialized.
-                    selectedTask = newTask.id
-                    focusedTask = .task(newTask.id)
-                }
+                try await TaskManager.shared.delete(task: id)
             } catch (let error) {
                 showAlert(error)
             }

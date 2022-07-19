@@ -119,22 +119,32 @@ struct TagManager {
         }
         throw PersistenceError.tagNotFound
     }
+
+    func findOrMake(tag: Tag, context: NSManagedObjectContext) -> TagMO {
+        do {
+            return try find(id: tag.id, context: context)
+        } catch {
+            return TagMO(context: context)
+        }
+    }
 }
 
 // MARK: - UI Related Tag Types
 
 extension TagManager {
 
-    // A SwiftUI presentation friendly view of a tag
+    // A SwiftUI presentation friendly view of a tag managed object
 
     struct Tag: Identifiable, Codable, Hashable {
 
         var id: UUID
         var name: String
 
-        /// Set to true to indicate that the presentation UI should allow this tag to be edited.
-        var isEditable = false
-
+        /// Create a new tag from scratch
+        init(id: Tag.ID, name: String) {
+            self.id = id
+            self.name = name
+        }
 
         /// Create a new tag with the given name.
         init(name: String) {
@@ -146,11 +156,6 @@ extension TagManager {
         init(mo: TagMO) {
             self.id = mo.id
             self.name = mo.name
-        }
-
-        /// Toggle the current editing mode, indicating that the UI should allow the tag to be edited.
-        mutating func toggleEditMode() {
-            isEditable.toggle()
         }
 
         func draggable() -> Draggable {

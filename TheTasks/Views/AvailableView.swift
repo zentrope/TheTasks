@@ -8,12 +8,18 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+
+fileprivate struct TaskOp {
+    var isPresented = false
+    var task = TheTask(newTask: "New Task")
+}
+
 struct AvailableView: View {
 
     @EnvironmentObject private var state: AppViewState
 
-    @State private var confirmDelete = false
-    @State private var taskToDelete: TheTask?
+    @State private var deleteOp = TaskOp()
+    @State private var upsertOp = TaskOp()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -25,32 +31,40 @@ struct AvailableView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.background)
 
-            ScrollView {
-                ForEach($state.tasks, id: \.id) { $task in
-                    HStack {
-                        TaskItemView(task: $task, action: handleTaskEvent)
-                            .lineLimit(1)
-                    }
-                    .confirmationDialog("Delete '\(taskToDelete?.task ?? "Unknown")'?", isPresented: $confirmDelete) {
-                        Button("Delete") {
-                            if let taskToDelete {
-                                state.delete(task: taskToDelete.id)
-                            }
-                        }
-                    }
+            List(selection: $state.selectedTask) {
+                ForEach(state.tasks, id: \.id) { task in
+                    TaskItemView(task: task, action: handleTaskEvent)
+                        .lineLimit(1)
                 }
             }
-            .background(.background)
             .listStyle(.inset(alternatesRowBackgrounds: false))
+
             TaskStatsView()
         }
 
         .frame(minWidth: 350, idealWidth: 350)
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
 
+        .confirmationDialog("Delete '\(deleteOp.task.task)'?", isPresented: $deleteOp.isPresented) {
+            Button("Delete") {
+                state.delete(task: deleteOp.task.id)
+            }
+        }
+
+        .sheet(isPresented: $upsertOp.isPresented, content: {
+            EditTaskForm(task: $upsertOp.task) { revisedTask in                
+                state.upsert(task: revisedTask)
+            }
+        })
+
         .toolbar {
 
-            Button(action: { state.createNewTask() }, label: { Image(systemName: "plus") })
+            Button {
+                upsertOp.task = TheTask(newTask: "New Task")
+                upsertOp.isPresented = true
+            } label: {
+                Image(systemName: "plus")
+            }
 
             Spacer()
 
@@ -72,11 +86,14 @@ struct AvailableView: View {
 
     private func handleTaskEvent(_ event: TaskItemEvent) {
         switch event {
+            case .edit(task: let task):
+                upsertOp.task = task
+                upsertOp.isPresented = true
             case .save(let task):
                 state.update(task: task.id, name: task.task)
             case .delete(let task):
-                taskToDelete = task
-                confirmDelete.toggle()
+                deleteOp.task = task
+                deleteOp.isPresented.toggle()
             case .complete(let task):
                 state.update(task: task.id, status: .completed)
             case .pending(let task):

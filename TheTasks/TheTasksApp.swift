@@ -36,8 +36,11 @@ struct TheTasksApp: App {
 
             // File menu
             CommandGroup(after: .newItem) {
-                Button("New Task") { state.createNewTask() }
-                    .keyboardShortcut("n", modifiers: [.command, .option])
+                Button("New Task") {
+                    // TODO: Find a way to have this invoke the appropriate form, maybe right here.
+                }
+                .keyboardShortcut("n", modifiers: [.command, .option])
+                .disabled(true)
             }
 
             // View menu

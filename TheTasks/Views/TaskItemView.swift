@@ -12,6 +12,7 @@ import UniformTypeIdentifiers
 enum TaskItemEvent {
     case delete(TheTask)
     case save(TheTask)
+    case edit(task: TheTask)
     case complete(TheTask)
     case pending(TheTask)
     case remove(tag: TagManager.Tag, from: TheTask)
@@ -20,18 +21,16 @@ enum TaskItemEvent {
 
 struct TaskItemView: View {
 
-    @Binding var task: TheTask
+    var task: TheTask
 
     var action: ((TaskItemEvent) -> ())?
 
     @State private var isTargetedForDrop = false
-    @State private var originalText = ""
-    @FocusState private var isFocused: Bool?
 
     private let queue = PassthroughSubject<String, Never>()
 
     var body: some View {
-        HStack { // Wrapper HSTack is so that the context menu covers whitespace but doesn't interfere with the onDrop/isTargeted background. Sigh.
+        HStack { // Wrapper HStack is so that the context menu covers whitespace but doesn't interfere with the onDrop/isTargeted background. Sigh.
             HStack (alignment: .center, spacing: 10) {
                 TaskClickIcon(status: task.status)
                     .frame(width: 20, alignment: .leading)
@@ -47,36 +46,9 @@ struct TaskItemView: View {
                         action?(pending ? .complete(task) : .pending(task))
                     }
 
-                if task.isEditable {
-                    TextField("", text: $task.task)
-                        .labelsHidden()
-                        .onChange(of: task.task) { newName in
-                            queue.send(newName)
-                        }
-                        .onReceive(queue.debounce(for: .seconds(1), scheduler: DispatchQueue.main).removeDuplicates()) { text in
-                            action?(.save(task))
-                        }
-                        .onSubmit {
-                            task.toggleEditMode()
-                            action?(.save(task))
-                        }
-                        .onExitCommand(perform: {
-                            task.toggleEditMode()
-                            task.task = originalText
-                            action?(.save(task))
-                        })
-                        .focused($isFocused, equals: true)
-                        .onAppear {
-                            self.originalText = task.task
-                            isFocused = true
-                        }
-                } else {
-                    Text(task.task)
-                        .foregroundColor(pending ? .primary : .secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 2.5)
-                        .padding(.horizontal, 4)
-                }
+                Text(task.task)
+                    .foregroundColor(pending ? .primary : .secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 HStack {
                     ForEach(task.tags, id: \.id) { tag in
@@ -90,17 +62,7 @@ struct TaskItemView: View {
                     }
                 }
             }
-            .padding(.horizontal, 17)
-            .padding(.vertical, 2)
             .background(isTargetedForDrop ? Color(nsColor: .quaternaryLabelColor) : Color.clear)
-
-            // The user might have clicked on some other part of the list, so force off edit mode.
-            .onChange(of: isFocused) { currentFocus in
-                guard let currentFocus, currentFocus == true else {
-                    task.toggleEditMode(force: false)
-                    return
-                }
-            }
 
             // This doesn't match the List-based highlight.
             .clipShape(RoundedRectangle(cornerRadius: 5, style: .circular))
@@ -115,9 +77,11 @@ struct TaskItemView: View {
                 return true
             }
         }
-        .background(.background)
+
         .contextMenu {
-            Button("Edit Task") { task.toggleEditMode() }
+            Button("Edit Task") {
+                action?(.edit(task: task))
+            }
             if pending {
                 Button("Complete Task") { action?(.complete(task)) }
             } else {

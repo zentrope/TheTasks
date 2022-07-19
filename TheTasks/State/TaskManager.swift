@@ -57,6 +57,21 @@ struct TaskManager {
         }
     }
 
+    /// Update the task if it already exists, or create a new one if not.
+    func upsert(task: TheTask) async throws {
+        let context = controller.newBackgroundContext()
+        try await context.perform {
+            let taskMO = findOrMake(task: task, context: context)
+            taskMO.id = task.id
+            taskMO.created = task.created
+            taskMO.status = task.status.rawValue
+            taskMO.task = task.task
+            taskMO.tags = NSSet(array: task.tags.map { TagManager.shared.findOrMake(tag: $0, context: context)})
+            taskMO.isExportable = task.isExportable
+            try context.commit()
+        }
+    }
+
     func update(task id: UUID, isExportable: Bool) async throws {
         let context = controller.newBackgroundContext()
         try await context.perform {
@@ -153,6 +168,15 @@ struct TaskManager {
 }
 
 extension TaskManager {
+
+    private func findOrMake(task: TheTask, context: NSManagedObjectContext) -> TaskMO {
+        do {
+            let task = try find(task: task.id, context: context)
+            return task
+        } catch {
+            return TaskMO(context: context)
+        }
+    }
 
     private func find(task id: UUID, context: NSManagedObjectContext) throws -> TaskMO {
         let request = TaskMO.fetchRequest()
