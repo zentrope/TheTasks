@@ -50,12 +50,6 @@ class NavViewState: NSObject, ObservableObject, NSFetchedResultsControllerDelega
         }
     }
 
-    func rename(tag: TagManager.Tag, name: String) {
-        withTransaction {
-            try await TagManager.shared.rename(tag: tag, name: name.trimmingCharacters(in: .whitespacesAndNewlines))
-        }
-    }
-
     func delete(tag: TagManager.Tag) {
         withTransaction {
             try await TagManager.shared.delete(tag: tag)
