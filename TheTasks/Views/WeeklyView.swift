@@ -17,17 +17,6 @@ struct WeeklyView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                DateView(date: state.focus.startOfWeek(), format: .nameMonthDayYear)
-                Spacer()
-                DateView(date: state.focus.endOfWeek(), format: .nameMonthDayYear)
-            }
-            .lineLimit(1)
-            .font(.taskHeading)
-            .foregroundColor(.secondary)
-            .padding()
-            .background(.background)
-
             List {
                 ForEach(state.days, id: \.id) { day in
                     Section(header: DateView(date: day.date, format: .journalStyle)) {
@@ -57,6 +46,8 @@ struct WeeklyView: View {
             WeeklyViewStats(focus: state.focus, count: state.completedTasks, exportableCount: state.exportableTasks)
         }
         .frame(minWidth: 350, idealWidth: 350)
+        .navigationTitle("Weekly View")
+        .navigationSubtitle(state.exportableTasks == 0 ? "No exportable tasks" : "\(state.exportableTasks) exportable tasks")
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
         .onAppear { state.focus(on: date) }
         .onChange(of: showAllTasks) { isVisible in state.toggle(visible: isVisible) }

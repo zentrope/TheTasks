@@ -103,6 +103,8 @@ struct ContentView: View {
             }
 
             Text("Pick a view")
+                .navigationTitle("Tasks")
+                .navigationSubtitle("For daily work, and weekly reporting")
         }
     }
 

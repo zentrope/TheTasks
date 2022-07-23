@@ -23,14 +23,6 @@ struct AvailableView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-
-            Text("Available")
-                .font(.taskHeading)
-                .foregroundColor(.accentColor)
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(.background)
-
             List(selection: $state.selectedTask) {
                 ForEach(state.tasks, id: \.id) { task in
                     TaskItemView(task: task, action: handleTaskEvent)
@@ -41,7 +33,8 @@ struct AvailableView: View {
 
             TaskStatsView(stats: state.stats)
         }
-
+        .navigationTitle("Available")
+        .navigationSubtitle(state.stats.pending == 0 ? "All clear" : "\(state.stats.pending) pending tasks")
         .frame(minWidth: 350, idealWidth: 350)
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
 
