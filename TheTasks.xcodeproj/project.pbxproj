@@ -20,7 +20,7 @@
 		531135D52860072400B165BD /* TheTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531135D42860072400B165BD /* TheTask.swift */; };
 		531135D72860099900B165BD /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531135D62860099900B165BD /* TaskManager.swift */; };
 		531135DB28600BE700B165BD /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531135DA28600BE700B165BD /* PersistenceError.swift */; };
-		531135DD28600DBB00B165BD /* AppViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531135DC28600DBB00B165BD /* AppViewState.swift */; };
+		531135DD28600DBB00B165BD /* AvailableViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531135DC28600DBB00B165BD /* AvailableViewState.swift */; };
 		5326B9AA2872062D006CFCDE /* BadgeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326B9A92872062D006CFCDE /* BadgeManager.swift */; };
 		5326B9AC287212DF006CFCDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326B9AB287212DF006CFCDE /* SettingsView.swift */; };
 		53294D0F286022C20013AE5F /* TaskItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53294D0E286022C20013AE5F /* TaskItemView.swift */; };
@@ -86,7 +86,7 @@
 		531135D42860072400B165BD /* TheTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheTask.swift; sourceTree = "<group>"; };
 		531135D62860099900B165BD /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
 		531135DA28600BE700B165BD /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
-		531135DC28600DBB00B165BD /* AppViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewState.swift; sourceTree = "<group>"; };
+		531135DC28600DBB00B165BD /* AvailableViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableViewState.swift; sourceTree = "<group>"; };
 		5326B9A92872062D006CFCDE /* BadgeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeManager.swift; sourceTree = "<group>"; };
 		5326B9AB287212DF006CFCDE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		53294D0E286022C20013AE5F /* TaskItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItemView.swift; sourceTree = "<group>"; };
@@ -260,7 +260,7 @@
 		53275B32286428BE0003F59B /* ViewState */ = {
 			isa = PBXGroup;
 			children = (
-				531135DC28600DBB00B165BD /* AppViewState.swift */,
+				531135DC28600DBB00B165BD /* AvailableViewState.swift */,
 				53DC801128863BE20069954B /* EditTaskViewState.swift */,
 				536A50DC2878921200F99B84 /* NavViewState.swift */,
 				533A4DE82868276D007E3B3F /* WeeklyViewState.swift */,
@@ -423,7 +423,7 @@
 				531135A82860041B00B165BD /* TheTasks.xcdatamodeld in Sources */,
 				53DC8010288625BC0069954B /* EditTaskForm.swift in Sources */,
 				537D0A162868DE3200B98E77 /* FileManager.swift in Sources */,
-				531135DD28600DBB00B165BD /* AppViewState.swift in Sources */,
+				531135DD28600DBB00B165BD /* AvailableViewState.swift in Sources */,
 				531135A52860041B00B165BD /* PersistenceController.swift in Sources */,
 				53D51CB5287923B7005020CE /* TagMO+CoreDataClass.swift in Sources */,
 				53760EBD2870B5A900B0731E /* TaskIcon.swift in Sources */,
@@ -600,7 +600,7 @@
 				CODE_SIGN_ENTITLEMENTS = TheTasks/TheTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2070;
+				CURRENT_PROJECT_VERSION = 2078;
 				DEVELOPMENT_ASSET_PATHS = "\"TheTasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -629,7 +629,7 @@
 				CODE_SIGN_ENTITLEMENTS = TheTasks/TheTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2070;
+				CURRENT_PROJECT_VERSION = 2078;
 				DEVELOPMENT_ASSET_PATHS = "\"TheTasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -657,7 +657,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2070;
+				CURRENT_PROJECT_VERSION = 2078;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
@@ -677,7 +677,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2070;
+				CURRENT_PROJECT_VERSION = 2078;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
@@ -695,7 +695,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2070;
+				CURRENT_PROJECT_VERSION = 2078;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -712,7 +712,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2070;
+				CURRENT_PROJECT_VERSION = 2078;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;

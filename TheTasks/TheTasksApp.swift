@@ -13,14 +13,11 @@ fileprivate let log = Logger("TheTasksApp")
 @main
 struct TheTasksApp: App {
 
-    @StateObject private var state = AppViewState()
-
-    @AppStorage("showBadge") var showBadge = true
+    @AppStorage("showBadge") private var showBadge = true
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(state)
                 .frame(minWidth: 500, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 400, maxHeight: .infinity)
                 .task {
                     BadgeManager.shared.showBadge = showBadge

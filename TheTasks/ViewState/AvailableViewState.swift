@@ -1,5 +1,5 @@
 //
-//  AppViewState.swift
+//  AvailableViewState.swift
 //  TheTasks
 //
 //  Created by Keith Irwin on 6/19/22.
@@ -18,7 +18,7 @@ enum FocusTask: Hashable {
 }
 
 @MainActor
-final class AppViewState: NSObject, ObservableObject { // NSObject required for use as a delegate
+final class AvailableViewState: NSObject, ObservableObject { // NSObject required for use as a delegate
 
     // MARK: - Publishers
 
@@ -43,11 +43,7 @@ final class AppViewState: NSObject, ObservableObject { // NSObject required for 
     @Published var selectedTask: TheTask.ID?
     @Published var focusedTask: FocusTask?
 
-    // TODO: Make this a struct
-    @Published var cancelledTasks = 0
-    @Published var completedTasks = 0
-    @Published var totalTasks = 0
-    @Published var pendingTasks = 0
+    @Published var stats = TaskStats(completed: 0, total: 0, pending: 0)
 
     // MARK: - Local State
 
@@ -68,7 +64,7 @@ final class AppViewState: NSObject, ObservableObject { // NSObject required for 
 
 // MARK: - Public API
 
-extension AppViewState {
+extension AvailableViewState {
 
     private func doTask(_ handler: @escaping () async throws -> Void) {
         Task {
@@ -135,20 +131,19 @@ extension AppViewState {
 
 // MARK: - Implementation details
 
-extension AppViewState {
+extension AvailableViewState {
 
     private func reload() {
         Task {
             do {
                 try cursor.performFetch()
                 let tasks = cursor.fetchedObjects ?? []
+                let total = try TaskManager.shared.numberOfTasks()
+                let completed = try TaskManager.shared.numberOfTasks(withStatus: .completed)
+                let pending = try TaskManager.shared.numberOfTasks(withStatus: .pending)
+
                 self.tasks = tasks.map { .init(mo: $0) }
-
-                self.totalTasks = try TaskManager.shared.numberOfTasks()
-                self.completedTasks = try TaskManager.shared.numberOfTasks(withStatus: .completed)
-                self.pendingTasks = try TaskManager.shared.numberOfTasks(withStatus: .pending)
-                self.cancelledTasks = try TaskManager.shared.numberOfTasks(withStatus:.cancelled)
-
+                self.stats = TaskStats(completed: completed, total: total, pending: pending)
             }
             catch (let error) {
                 showAlert(error)
@@ -181,9 +176,21 @@ extension AppViewState {
     }
 }
 
+// MARK: - Presentation Objects
+
+extension AvailableViewState {
+
+    struct TaskStats: Identifiable {
+        var id = UUID()
+        var completed: Int
+        var total: Int
+        var pending: Int
+    }
+}
+
 // MARK: - Fetched Results Delegate
 
-extension AppViewState: NSFetchedResultsControllerDelegate {
+extension AvailableViewState: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         reload()
     }

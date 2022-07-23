@@ -9,14 +9,16 @@ import SwiftUI
 
 struct TaskStatsView: View {
 
-    @EnvironmentObject private var state: AppViewState
+    @EnvironmentObject private var state: AvailableViewState
+
+    var stats: AvailableViewState.TaskStats
 
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
             Spacer()
             HStack(spacing: 4) {
                 Text("Total:")
-                Text("\(state.totalTasks)")
+                Text("\(stats.total)")
                     .foregroundColor(.blue)
                     .font(.callout.monospacedDigit())
             }
@@ -25,7 +27,7 @@ struct TaskStatsView: View {
 
             HStack(spacing: 4) {
                 Text("Pending:")
-                Text("\(state.pendingTasks)")
+                Text("\(stats.pending)")
                     .foregroundColor(.red)
                     .font(.callout.monospacedDigit())
             }
@@ -34,16 +36,7 @@ struct TaskStatsView: View {
 
             HStack(spacing: 4) {
                 Text("Completed:")
-                Text("\(state.completedTasks)")
-                    .foregroundColor(.blue)
-                    .font(.callout.monospacedDigit())
-            }
-
-            Divider()
-
-            HStack(spacing: 4) {
-                Text("Cancelled:")
-                Text("\(state.cancelledTasks)")
+                Text("\(stats.completed)")
                     .foregroundColor(.blue)
                     .font(.callout.monospacedDigit())
             }
@@ -72,7 +65,6 @@ struct TaskStatsView: View {
 
 struct TaskStatsView_Previews: PreviewProvider {
     static var previews: some View {
-        TaskStatsView()
-            .environmentObject(AppViewState())
+        TaskStatsView(stats: AvailableViewState.TaskStats(completed: 10, total: 110, pending: 100))
     }
 }

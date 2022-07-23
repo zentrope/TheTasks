@@ -16,7 +16,7 @@ fileprivate struct TaskOp {
 
 struct AvailableView: View {
 
-    @EnvironmentObject private var state: AppViewState
+    @StateObject private var state = AvailableViewState()
 
     @State private var deleteOp = TaskOp()
     @State private var upsertOp = TaskOp()
@@ -39,7 +39,7 @@ struct AvailableView: View {
             }
             .listStyle(.inset(alternatesRowBackgrounds: false))
 
-            TaskStatsView()
+            TaskStatsView(stats: state.stats)
         }
 
         .frame(minWidth: 350, idealWidth: 350)
