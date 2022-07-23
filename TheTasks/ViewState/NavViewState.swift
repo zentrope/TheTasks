@@ -44,13 +44,9 @@ class NavViewState: NSObject, ObservableObject, NSFetchedResultsControllerDelega
         subscriptions.forEach { $0.cancel() }
     }
 
-    func makeNewTask() async -> TagManager.Tag? {
-        do {
-            let newTag = try await TagManager.shared.insertNew()
-            return newTag
-        } catch (let error) {
-            show(alert: error)
-            return nil
+    func upsert(tag: TagManager.Tag) {
+        withTransaction {
+            try await TagManager.shared.upsert(tag: tag)
         }
     }
 

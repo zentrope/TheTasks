@@ -22,44 +22,15 @@ struct TagManager {
         self.controller = controller
     }
 
-    @discardableResult
-    func insertNew() async throws -> TagManager.Tag? {
+    func upsert(tag: Tag) async throws {
         let context = controller.newBackgroundContext()
-        let id = UUID()
-        var returnTag: TagManager.Tag?
         try await context.perform {
-            var index = 1
-
-            var name = "New Tag"
-            var done = false
-
-            while !done {
-                do {
-                    let _ = try find(name: name, context: context)
-                    name = "New Tag \(index)"
-                    index += 1
-                    continue
-                } catch {
-                    let tagMO = TagMO(context: context)
-                    tagMO.id = id
-                    tagMO.name = name
-                    returnTag = TagManager.Tag(mo: tagMO)
-                    done = true
-                }
+            if isDuplicate(tag: tag, context: context) {
+                throw PersistenceError.tagAlreadyUsed
             }
-
-            try context.commit()
-        }
-        return returnTag
-    }
-
-    func insert(tag: Tag) async throws {
-        log.debug("Inserting tag: \(String(describing: tag))")
-        let context = controller.newBackgroundContext()
-        try await context.perform {
-            let tagMO = TagMO(context: context)
+            let tagMO = findOrMake(tag: tag, context: context)
             tagMO.id = tag.id
-            tagMO.name = tag.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            tagMO.name = tag.name
             try context.commit()
         }
     }

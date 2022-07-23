@@ -71,12 +71,8 @@ struct ContentView: View {
                 Spacer()
                 HStack {
                     Button {
-                        Task {
-                            if let newTag = await state.makeNewTask() {
-                                tagRenameOp.tag = newTag
-                                tagRenameOp.presented.toggle()
-                            }
-                        }
+                        tagRenameOp.tag = TagManager.Tag(id: UUID(), name: "New Tag")
+                        tagRenameOp.presented.toggle()
                     } label: {
                         Label("Add Tag", systemImage: "plus.circle")
                     }
@@ -93,7 +89,7 @@ struct ContentView: View {
             // When you want to edit a tag, you have to use a modal form.
             .sheet(isPresented: $tagRenameOp.presented) {
                 EditTagForm(tag: $tagRenameOp.tag) { newTag in
-                    state.rename(tag: tagRenameOp.tag, name: newTag.name)
+                    state.upsert(tag: newTag)
                 }
             }
 
