@@ -44,19 +44,6 @@ struct TagManager {
         }
     }
 
-    func rename(tag: Tag, name: String) async throws {
-        let context = controller.newBackgroundContext()
-        try await context.perform {
-            if isDuplicate(tag: tag, context: context) {
-                throw PersistenceError.tagAlreadyUsed
-            }
-
-            let tagMO = try find(id: tag.id, context: context)
-            tagMO.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            try context.commit()
-        }
-    }
-
     func cursor() -> NSFetchedResultsController<TagMO> {
         let request = TagMO.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
