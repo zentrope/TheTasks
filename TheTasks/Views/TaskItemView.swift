@@ -45,6 +45,12 @@ struct TaskItemView: View {
                     .onTapGesture {
                         action?(pending ? .complete(task) : .pending(task))
                     }
+                    .overlay(Image(systemName: "plus.circle.fill")
+                             // When you hover over a list item to drop a tag, you see a (+) over the checkbox icon to indicate which item you're going to drop on. If you ever see a more appropriate affordance for dropping on a SwiftUI list item, use it. I'd put a border around the row, but I can't find a way to make it match the selection shape (and size) computed by List.
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(isTargetedForDrop ? Color.white : .clear,
+                                         isTargetedForDrop ? Color.accentColor : .clear)
+                        .font(.title2), alignment: .center)
 
                 Text(task.task)
                     .foregroundColor(pending ? .primary : .secondary)
@@ -62,10 +68,6 @@ struct TaskItemView: View {
                     }
                 }
             }
-            .background(isTargetedForDrop ? Color(nsColor: .quaternaryLabelColor) : Color.clear)
-
-            // This doesn't match the List-based highlight.
-            .clipShape(RoundedRectangle(cornerRadius: 5, style: .circular))
             .onDrop(of: [UTType.tag.identifier], isTargeted: $isTargetedForDrop) { providers in
                 for p in providers {
                     p.loadObject(ofClass: TagManager.Draggable.self) { draggable, _ in
