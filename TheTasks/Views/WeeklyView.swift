@@ -34,9 +34,13 @@ struct WeeklyView: View {
                                     .foregroundColor(task.isExportable ? .primary : .secondary)
 
                                 Spacer()
-
-                                TaskIcon(status: task.status)
-                                    .opacity(task.isExportable ? 1 : 0.5)
+                                HStack {
+                                    ForEach(task.tags, id: \.id) { tag in
+                                        TagBadgeView(tag: tag)
+                                            .font(.caption)
+                                            .opacity(task.isExportable ? 1 : 0.5)
+                                    }
+                                }
                             }
                             .lineLimit(1)
                         }
