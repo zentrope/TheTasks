@@ -48,12 +48,20 @@ final class AvailableViewState: NSObject, ObservableObject { // NSObject require
     // MARK: - Local State
 
     private var cursor: NSFetchedResultsController<TaskMO>
+
+    // If a tag is re-named, we want to refresh the display. This will also refresh the display if tags are added or removed, but it's rare enough that I don't think it's necessary to refine.
+    private var tagCursor: NSFetchedResultsController<TagMO>
     private var subscribers = Set<AnyCancellable>()
 
     override init() {
-        self.cursor = TaskManager.shared.taskCursor()
+        self.cursor = TaskManager.shared.cursor()
+        self.tagCursor = TagManager.shared.cursor()
         super.init()
         self.cursor.delegate = self
+        self.tagCursor.delegate = self
+
+        // Do an initial request to load the cursor so we can get change notifications
+        try? tagCursor.performFetch()
 
         self.cursor.fetchRequest.sortDescriptors = [
             NSSortDescriptor(key: "created", ascending: false)
@@ -191,7 +199,7 @@ extension AvailableViewState {
 // MARK: - Fetched Results Delegate
 
 extension AvailableViewState: NSFetchedResultsControllerDelegate {
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {    
         reload()
     }
 }

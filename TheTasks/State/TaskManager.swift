@@ -110,7 +110,7 @@ struct TaskManager {
         }
     }
 
-    func taskCursor(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) -> NSFetchedResultsController<TaskMO> {
+    func cursor(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) -> NSFetchedResultsController<TaskMO> {
         let request = TaskMO.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "created", ascending: true)]
         return NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
@@ -132,7 +132,7 @@ struct TaskManager {
         log.info("Invoking remove duplicates function.")
         let context = controller.newBackgroundContext()
         try await context.perform {
-            let cursor = taskCursor(context: context)
+            let cursor = cursor(context: context)
             try cursor.performFetch()
 
             var checker = [UUID:[TaskMO]]()

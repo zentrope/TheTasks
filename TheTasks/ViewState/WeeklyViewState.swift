@@ -32,7 +32,7 @@ final class WeeklyViewState: NSObject, ObservableObject {
     private var showMostRecentFirst = true
 
     override init() {
-        self.cursor = TaskManager.shared.taskCursor()
+        self.cursor = TaskManager.shared.cursor()
         super.init()
         self.cursor.delegate = self
 

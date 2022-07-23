@@ -28,7 +28,7 @@ class BadgeManager: NSObject, NSFetchedResultsControllerDelegate {
 
     private override init() {
 
-        self.cursor = TaskManager.shared.taskCursor()
+        self.cursor = TaskManager.shared.cursor()
         self.cursor.fetchRequest.predicate = NSPredicate(format: "status = 'pending'")
 
         super.init()
