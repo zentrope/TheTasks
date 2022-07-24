@@ -43,33 +43,47 @@ final class WeeklyViewState: NSObject, ObservableObject {
         self.reload()
     }
 
-    func export() {
-        log.debug("An export was requested.")
-        var lines = [String]()
-        for day in days {
-            let tasks = day.tasks.filter({ $0.isExportable })
-            guard tasks.count > 0 else { continue }
+    func exportWeek() {
+        let tasks = days
+            .reduce([], {$0 + $1.tasks})
+            .filter { $0.isExportable }
+        export(tasks: tasks, qualifier: "Work Week")
+    }
 
-            let title = "\n# \(day.date.humanString)\n"
-            lines.append(title)
-
-            for task in tasks {
-
-                let token     = ":task"
-                let id        = "[id:\(task.id.uuidString.lowercased())]"
-                let created   = "[created:\(task.created.iso8601)]"
-                let completed = "[completed:\(task.completed?.iso8601 ?? "none")]"
-                let name      = task.task
-
-                let row = "\(token) \(id) \(created) \(completed) \(name)"
-                lines.append(row)
-            }
+    func exportAll() {
+        let cursor = TaskManager.shared.cursor()
+        cursor.fetchRequest.predicate = NSPredicate(format: "status = 'completed' && isExportable = true")
+        cursor.fetchRequest.sortDescriptors = [ NSSortDescriptor(key: "completed", ascending: false)]
+        do {
+            try cursor.performFetch()
+            let tasks = (cursor.fetchedObjects ?? []).map { TheTask(mo: $0) }
+            export(tasks: tasks, qualifier: "All as of")
+        } catch (let error) {
+            show(alert: error)
         }
-        let text = lines.joined(separator: "\n")
+    }
+
+    private func export(tasks: [TheTask], qualifier: String) {
+        let columns = ["id", "task", "created", "completed", "tags"]
+            .joined(separator: ",")
+
+        func row(_ task: TheTask) -> String {
+            let row = [
+                task.id.uuidString.lowercased(),
+                task.task.quoted,
+                task.created.iso8601,
+                task.completed?.iso8601 ?? "-",
+                task.tags.map { $0.name }.joined(separator: "; ")]
+                .joined(separator: #"",""#)
+            return #""\#(row)""#
+        }
+
+        let rows = tasks .map { row($0) }
+        let text = ([columns] + rows).joined(separator: "\n")
 
         do {
             let timestamp = focus.endOfWeek().exportMonthYearWeekString
-            let filename = "Task Inventory \(timestamp)"
+            let filename = "Task Inventory \(qualifier) \(timestamp)"
             try AppKit.save(text: text, toName: filename)
         } catch (let error) {
             show(alert: error)

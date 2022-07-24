@@ -68,12 +68,17 @@ struct WeeklyView: View {
                 Image(systemName: "line.3.horizontal.decrease.circle")
             }
 
-            Button {
-                state.export()
+            Menu {
+                Button("Export this week") {
+                    state.exportWeek()
+                }
+                Button("Export all weeks") {
+                    state.exportAll()
+                }
             } label: {
-                Image(systemName: "arrow.down.circle")
+                Image(systemName: "square.and.arrow.down")
             }
-            .help("Export weekly task report")
+                .help("Export weekly work task report")
         }
     }
 }

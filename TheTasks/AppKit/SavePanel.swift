@@ -14,7 +14,7 @@ struct AppKit {
 
     static func save(text: String, toName filename: String) throws {
         let savePanel = NSSavePanel()
-        savePanel.allowedContentTypes = [.plainText]
+        savePanel.allowedContentTypes = [.commaSeparatedText]
         savePanel.canCreateDirectories = true
         savePanel.isExtensionHidden = false
         savePanel.allowsOtherFileTypes = false

@@ -9,17 +9,6 @@ import Foundation
 
 extension Date {
 
-    func isToday() -> Bool {
-        let today = Calendar.current.startOfDay(for: Date())
-        return Calendar.current.isDate(self, inSameDayAs: today)
-    }
-
-    func isYesterday() -> Bool {
-        let today = Calendar.current.startOfDay(for: Date())
-        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
-        return Calendar.current.isDate(self, inSameDayAs: yesterday)
-    }
-
     func startOfWeek() -> Date {
         Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: self).date!
     }
@@ -59,7 +48,7 @@ extension Date {
         let start = self.startOfWeek()
         var results = [Date]()
         for offset in (0..<7) {
-            let day = Calendar.current.date(byAdding: .day, value: offset, to: start)!          
+            let day = Calendar.current.date(byAdding: .day, value: offset, to: start)!
             results.append(day)
         }
         return results
