@@ -61,13 +61,6 @@ struct ContentView: View {
                     }
                 }
                 .listStyle(.sidebar)
-                .toolbar {
-                    Button {
-                        toggleSidebar()
-                    } label: {
-                        Image(systemName: "sidebar.left")
-                    }
-                }
                 Spacer()
                 HStack {
                     Button {
@@ -106,10 +99,6 @@ struct ContentView: View {
                 .navigationTitle("Tasks")
                 .navigationSubtitle("For daily work, and weekly reporting")
         }
-    }
-
-    private func toggleSidebar() {
-        NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
     }
 }
 
