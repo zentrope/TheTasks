@@ -60,11 +60,7 @@ struct TaskItemView: View {
                     ForEach(task.tags, id: \.id) { tag in
                         TagBadgeView(tag: tag)
                             .font(.caption)
-                            .contextMenu {
-                                Button("Remove \"\(tag.name)\" Tag") {
-                                    action?(.remove(tag: tag, from: task))
-                                }
-                            }
+                            .opacity(task.status == .pending ? 1.0 : 0.5)
                     }
                 }
             }

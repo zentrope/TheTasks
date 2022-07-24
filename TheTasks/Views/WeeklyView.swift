@@ -47,6 +47,7 @@ struct WeeklyView: View {
                     }
                 }
             }
+            .listStyle(.inset(alternatesRowBackgrounds: true))
             WeeklyViewStats(focus: state.focus, count: state.completedTasks, exportableCount: state.exportableTasks)
         }
         .frame(minWidth: 350, idealWidth: 350)

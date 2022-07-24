@@ -29,7 +29,7 @@ struct AvailableView: View {
                         .lineLimit(1)
                 }
             }
-            .listStyle(.inset(alternatesRowBackgrounds: false))
+            .listStyle(.inset(alternatesRowBackgrounds: true))
 
             TaskStatsView(stats: state.stats)
         }
@@ -52,6 +52,10 @@ struct AvailableView: View {
 
         .toolbar {
 
+            TagFilterButton()
+
+            Spacer()
+
             Button {
                 upsertOp.task = TheTask(newTask: "New Task")
                 upsertOp.isPresented = true
@@ -61,7 +65,7 @@ struct AvailableView: View {
 
             Spacer()
 
-            // Using toggles like this doesn't feel like the right way to go, but leaving this in until I see something better. I think a segmented controll for all, today and today+completed is more reasonable.
+            // Using toggles like this doesn't feel like the right way to go, but leaving this in until I see something better. I think a segmented controll for al, today and today+completed is more reasonable, or maybe something higher level.
             Toggle(isOn: $state.showCompleted) {
                 // MACOS13: use checklist.checked and checklist.unchecked
                 Image(systemName: state.showCompleted ? "checkmark.circle.fill" : "checkmark.circle")
@@ -96,6 +100,24 @@ struct AvailableView: View {
             case .add(tag: let tag, to: let task):
                 state.add(tag: tag, to: task)
         }
+    }
+}
+
+fileprivate struct TagFilterButton: View {
+
+    @State private var show = false
+
+    var body: some View {
+        Button {
+            show.toggle()
+        } label: {
+            Image(systemName: "tag")
+        }
+        .popover(isPresented: $show, content: {
+            TagPicker(initialTags: [])
+                .listStyle(.plain)
+                .frame(minWidth: 150, minHeight: 150, maxHeight: 200)
+        })
     }
 }
 
