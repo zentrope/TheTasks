@@ -23,6 +23,9 @@ struct AvailableView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Hack, to keep the list from showing up in the toolbar when window style is set to to .hiddenTitleBar
+            Spacer().frame(height: 0.5)
+
             List(selection: $state.selectedTask) {
                 ForEach(state.tasks, id: \.id) { task in
                     TaskItemView(task: task, action: handleTaskEvent)
@@ -35,6 +38,9 @@ struct AvailableView: View {
             TaskStatsView(stats: state.stats)
         }
         .frame(minWidth: 350, idealWidth: 350)
+
+        // Hack: so that the toolbar doesn't get the semi-transparent look
+        .background(.background)
 
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
 
