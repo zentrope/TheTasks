@@ -24,10 +24,10 @@ struct TheTasksApp: App {
                 }
                 .onChange(of: showBadge) { updatedShowBadgeToggle in
                     BadgeManager.shared.showBadge = updatedShowBadgeToggle
-                }
+                }                
         }
         .windowStyle(.titleBar)
-        .windowToolbarStyle(.unified(showsTitle: true))
+        .windowToolbarStyle(.unified(showsTitle: false))
         .commands {
             SidebarCommands()
 

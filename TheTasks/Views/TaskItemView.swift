@@ -30,28 +30,29 @@ struct TaskItemView: View {
     private let queue = PassthroughSubject<String, Never>()
 
     var body: some View {
-        HStack { // Wrapper HStack is so that the context menu covers whitespace but doesn't interfere with the onDrop/isTargeted background. Sigh.
-            HStack (alignment: .center, spacing: 10) {
-                TaskClickIcon(status: task.status)
-                    .frame(width: 20, alignment: .leading)
-                    .font(.title2)
-                    .onHover { inside in
-                        if inside {
-                            NSCursor.pointingHand.push()
-                        } else {
-                            NSCursor.pop()
-                        }
+        HStack (alignment: .top, spacing: 10) {
+
+            TaskClickIcon(status: task.status)
+                .frame(width: 20, alignment: .leading)
+                .font(.title2)
+                .onHover { inside in
+                    if inside {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
                     }
-                    .onTapGesture {
-                        action?(pending ? .complete(task) : .pending(task))
-                    }
-                    .overlay(Image(systemName: "plus.circle.fill")
-                             // When you hover over a list item to drop a tag, you see a (+) over the checkbox icon to indicate which item you're going to drop on. If you ever see a more appropriate affordance for dropping on a SwiftUI list item, use it. I'd put a border around the row, but I can't find a way to make it match the selection shape (and size) computed by List.
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(isTargetedForDrop ? Color.white : .clear,
-                                         isTargetedForDrop ? Color.accentColor : .clear)
+                }
+                .onTapGesture {
+                    action?(pending ? .complete(task) : .pending(task))
+                }
+                .overlay(Image(systemName: "plus.circle.fill")
+                         // When you hover over a list item to drop a tag, you see a (+) over the checkbox icon to indicate which item you're going to drop on. If you ever see a more appropriate affordance for dropping on a SwiftUI list item, use it. I'd put a border around the row, but I can't find a way to make it match the selection shape (and size) computed by List.
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(isTargetedForDrop ? Color.white : .clear,
+                                     isTargetedForDrop ? Color.accentColor : .clear)
                         .font(.title2), alignment: .center)
 
+            VStack(alignment: .leading, spacing: 6) {
                 Text(task.task)
                     .foregroundColor(pending ? .primary : .secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -62,20 +63,12 @@ struct TaskItemView: View {
                             .font(.caption)
                             .opacity(task.status == .pending ? 1.0 : 0.5)
                     }
+                    Spacer()
                 }
-            }
-            .onDrop(of: [UTType.tag.identifier], isTargeted: $isTargetedForDrop) { providers in
-                for p in providers {
-                    p.loadObject(ofClass: TagManager.Draggable.self) { draggable, _ in
-                        if let draggable = draggable as? TagManager.Draggable {
-                            action?(.add(tag: draggable.tag, to: task))
-                        }
-                    }
-                }
-                return true
+                .lineLimit(1)
+                .overlay(Divider().offset(y: 12), alignment: .bottom)
             }
         }
-
         .contextMenu {
             Button("Edit Task") {
                 action?(.edit(task: task))
@@ -87,6 +80,16 @@ struct TaskItemView: View {
             }
             Divider()
             Button("Delete Task") { action?(.delete(task)) }
+        }
+        .onDrop(of: [UTType.tag.identifier], isTargeted: $isTargetedForDrop) { providers in
+            for p in providers {
+                p.loadObject(ofClass: TagManager.Draggable.self) { draggable, _ in
+                    if let draggable = draggable as? TagManager.Draggable {
+                        action?(.add(tag: draggable.tag, to: task))
+                    }
+                }
+            }
+            return true
         }
     }
 

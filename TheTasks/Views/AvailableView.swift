@@ -27,15 +27,15 @@ struct AvailableView: View {
                 ForEach(state.tasks, id: \.id) { task in
                     TaskItemView(task: task, action: handleTaskEvent)
                         .lineLimit(1)
+                        .padding(8)
                 }
             }
-            .listStyle(.inset(alternatesRowBackgrounds: true))
+            .listStyle(.inset(alternatesRowBackgrounds: false))
 
             TaskStatsView(stats: state.stats)
         }
-        .navigationTitle("Available")
-        .navigationSubtitle(state.stats.pending == 0 ? "All clear" : "\(state.stats.pending) pending tasks")
         .frame(minWidth: 350, idealWidth: 350)
+
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
 
         .confirmationDialog("Delete '\(deleteOp.task.task)'?", isPresented: $deleteOp.isPresented) {
@@ -51,23 +51,7 @@ struct AvailableView: View {
         })
 
         .toolbar {
-
-            TagFilterButton()
-
-            Spacer()
-
-            Button {
-                upsertOp.task = TheTask(newTask: "New Task")
-                upsertOp.isPresented = true
-            } label: {
-                Image(systemName: "plus")
-            }
-
-            Spacer()
-
-            // Using toggles like this doesn't feel like the right way to go, but leaving this in until I see something better. I think a segmented controll for al, today and today+completed is more reasonable, or maybe something higher level.
             Toggle(isOn: $state.showCompleted) {
-                // MACOS13: use checklist.checked and checklist.unchecked
                 Image(systemName: state.showCompleted ? "checkmark.circle.fill" : "checkmark.circle")
                     .frame(width: 15)
             }
@@ -78,6 +62,18 @@ struct AvailableView: View {
                     .frame(width: 15)
             }
             .help("Show today only")
+
+            Spacer()
+
+            TagFilterButton()
+                .help("Non-function filter")
+
+            Button {
+                upsertOp.task = TheTask(newTask: "New Task")
+                upsertOp.isPresented = true
+            } label: {
+                Image(systemName: "plus")
+            }
         }
     }
 
@@ -105,7 +101,20 @@ struct AvailableView: View {
 
 fileprivate struct TagFilterButton: View {
 
+    typealias FilterAction = ([TagManager.Tag], Bool, String) -> Void
+
+    enum Logical: String, CaseIterable {
+        case matchAny = "Match any"
+        case matchAll = "Match all"
+    }
+
+    var action: FilterAction?
+
     @State private var show = false
+    @State private var strategy = Logical.matchAll
+    @State private var savedQuery = ""
+    @State private var shouldSave = false
+    @State private var selectedTags = [TagManager.Tag]()
 
     var body: some View {
         Button {
@@ -114,9 +123,27 @@ fileprivate struct TagFilterButton: View {
             Image(systemName: "tag")
         }
         .popover(isPresented: $show, content: {
-            TagPicker(initialTags: [])
+            VStack(alignment: .leading, spacing: 10) {
+                Picker("", selection: $strategy) {
+                    ForEach(Logical.allCases, id: \.self) { strategy in
+                        Text(strategy.rawValue).tag(strategy)
+                    }
+                }
+                Divider()
+                TagPicker(initialTags: [], action: { tags in
+                    selectedTags = tags
+                })
                 .listStyle(.plain)
-                .frame(minWidth: 150, minHeight: 150, maxHeight: 200)
+
+                HStack(spacing: 10) {
+                    TextField("Save search name", text: $savedQuery)
+                    Toggle("Save?", isOn: $shouldSave)
+                        .disabled(savedQuery.isEmpty)
+                }
+            }
+            .frame(minWidth: 150, minHeight: 300, maxHeight: 600)
+
+            .padding()
         })
     }
 }
