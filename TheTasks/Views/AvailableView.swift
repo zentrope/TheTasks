@@ -29,7 +29,6 @@ struct AvailableView: View {
             List(selection: $state.selectedTask) {
                 ForEach(state.tasks, id: \.id) { task in
                     TaskItemView(task: task, action: handleTaskEvent)
-                        .lineLimit(1)
                         .padding(8)
                 }
             }

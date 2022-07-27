@@ -53,9 +53,17 @@ struct TaskItemView: View {
                         .font(.title2), alignment: .center)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(task.task)
-                    .foregroundColor(pending ? .primary : .secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                HStack(alignment: .top, spacing: 0) {
+                    Text(task.task)
+                        .foregroundColor(pending ? .primary : .secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Spacer()
+                    if task.isExportable {
+                        Image(systemName: "square.and.arrow.down")
+                            .foregroundColor(.secondary)
+                            .font(.callout)
+                    }
+                }
 
                 HStack {
                     ForEach(task.tags, id: \.id) { tag in
@@ -110,15 +118,15 @@ struct TaskClickIcon: View {
         switch status {
             case .pending: return "circle"
             case .cancelled: return "circle.slash"
-            case .completed: return "checkmark.circle"
+            case .completed: return "circle.inset.filled"
         }
     }
 
     private var color: Color {
         switch status {
-            case .pending: return .green
+            case .pending: return .accentColor
             case .cancelled: return Color.brown
-            case .completed: return Color.secondary
+            case .completed: return .secondary
         }
     }
 }
