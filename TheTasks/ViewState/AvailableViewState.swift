@@ -199,7 +199,7 @@ extension AvailableViewState {
 // MARK: - Fetched Results Delegate
 
 extension AvailableViewState: NSFetchedResultsControllerDelegate {
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         reload()
     }
 }

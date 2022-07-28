@@ -57,7 +57,7 @@ struct TaskManager {
         }
     }
 
-    /// Update the task if it already exists, or create a new one if not.
+    /// Update the task if it already exists, otherwise create a new one.
     func upsert(task: TheTask) async throws {
         let context = controller.newBackgroundContext()
         try await context.perform {
@@ -82,6 +82,7 @@ struct TaskManager {
     }
 
     func update(task id: UUID, status: String, completed: Date? = nil) async throws {
+        log.debug("Updating task: '\(id)', to status: '\(status)'.")
         let context = controller.newBackgroundContext()
         try await context.perform {
             let taskMO = try find(task: id, context: context)
@@ -92,7 +93,7 @@ struct TaskManager {
     }
 
     func update(task id: UUID, description: String) async throws {
-        log.debug("renaming task \(id) to \(description).")
+        log.debug("Renaming task: '\(id)' to '\(description)'.")
         let context = controller.newBackgroundContext()
         try await context.perform {
             let taskMO = try find(task: id, context: context)
@@ -123,7 +124,6 @@ struct TaskManager {
         }
         return try controller.container.viewContext.count(for: fetch)
     }
-
 
     func removeDuplicates() async throws {
 

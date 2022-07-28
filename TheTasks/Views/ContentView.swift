@@ -42,10 +42,20 @@ struct ContentView: View {
                     Section(header: Text("Context")) {
                         ForEach(state.tags, id: \.id) { tag in
                             Label {
-                                Text(tag.name)
+                                HStack(alignment: .center, spacing: 3) {
+                                    Text(tag.name)
+                                    Spacer()
+                                    if tag.pendingTasks > 0 {
+                                        Text(String(tag.pendingTasks))
+                                            .foregroundColor(.red)
+                                            .font(.callout.monospacedDigit())
+                                            .frame(width: 15, alignment: .leading)
+                                    }
+                                }
                             } icon: {
-                                Image(systemName: "tag")
+                                Image(systemName: tag.totalTasks > 0 ? "tag" : "tag.slash")
                             }
+                            .help("\(tag.totalTasks) tasks")
                             .onDrag { NSItemProvider(object: tag.draggable())}
                             .contextMenu {
                                 Button("Rename Tag…") {

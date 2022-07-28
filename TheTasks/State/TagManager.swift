@@ -97,6 +97,8 @@ extension TagManager {
 
         var id: UUID
         var name: String
+        var totalTasks = 0
+        var pendingTasks = 0
 
         /// Create a new tag from scratch
         init(id: Tag.ID, name: String) {
@@ -114,6 +116,10 @@ extension TagManager {
         init(mo: TagMO) {
             self.id = mo.id
             self.name = mo.name
+
+            let tasks = (Array(mo.tasks ?? []) as? [TaskMO]) ?? [TaskMO]()
+            self.totalTasks = tasks.count
+            self.pendingTasks = tasks.filter { $0.taskStatus == .pending }.count
         }
 
         func draggable() -> Draggable {

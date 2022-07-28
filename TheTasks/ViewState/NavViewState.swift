@@ -9,10 +9,10 @@ import Combine
 import CoreData
 import OSLog
 
-fileprivate let log = Logger("NavigationViewState")
+fileprivate let log = Logger("NavViewState")
 
 @MainActor
-class NavViewState: NSObject, ObservableObject, NSFetchedResultsControllerDelegate {
+class NavViewState: NSObject, ObservableObject {
 
     @Published var activeView: CurrentView? = .available
     @Published var tags = [TagManager.Tag]()
@@ -22,13 +22,19 @@ class NavViewState: NSObject, ObservableObject, NSFetchedResultsControllerDelega
 
     private var subscriptions = Set<AnyCancellable>()
     private var cursor: NSFetchedResultsController<TagMO>
+    private var taskCursor: NSFetchedResultsController<TaskMO>
 
     override init() {
         cursor = TagManager.shared.cursor()
+        taskCursor = TaskManager.shared.cursor()
 
         super.init()
 
         cursor.delegate = self
+        taskCursor.delegate = self
+        taskCursor.fetchRequest.predicate = nil // everything
+        try? taskCursor.performFetch() // initial request
+
         reload()
         NotificationCenter.default.publisher(for: .appNavigateToView)
             .removeDuplicates()
@@ -60,7 +66,7 @@ class NavViewState: NSObject, ObservableObject, NSFetchedResultsControllerDelega
         withTransaction {
             try self.cursor.performFetch()
             let tags = ( self.cursor.fetchedObjects ?? [] ).map { TagManager.Tag(mo: $0) }
-            self.tags = tags
+            self.tags = tags.sorted(using: KeyPathComparator(\.totalTasks, order: .reverse))
         }
     }
 
@@ -80,10 +86,6 @@ class NavViewState: NSObject, ObservableObject, NSFetchedResultsControllerDelega
         self.showAlert = true
     }
 
-    internal nonisolated func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        Task { await reload() }
-    }
-
     enum CurrentView: Hashable {
         case available
         case thisWeek
@@ -97,5 +99,11 @@ class NavViewState: NSObject, ObservableObject, NSFetchedResultsControllerDelega
     enum FocusTag: Hashable {
         case none
         case tag(TagManager.Tag.ID)
+    }
+}
+
+extension NavViewState: NSFetchedResultsControllerDelegate {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        reload()
     }
 }
