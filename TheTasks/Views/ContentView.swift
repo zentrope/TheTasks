@@ -26,15 +26,15 @@ struct ContentView: View {
             VStack {
                 List {
                     Section(header: Text("Browse")) {
-                        NavigationLink(destination: AvailableView().frame(minWidth: 350), tag: NavViewState.CurrentView.available, selection: $state.activeView) {
+                        NavigationLink(destination: AvailableView(), tag: NavViewState.CurrentView.available, selection: $state.activeView) {
                             Label("Available", systemImage: "clock")
                         }
 
-                        NavigationLink(destination: WeeklyView(date: Date()).frame(minWidth: 350), tag: NavViewState.CurrentView.thisWeek, selection: $state.activeView) {
+                        NavigationLink(destination: WeeklyView(date: Date()), tag: NavViewState.CurrentView.thisWeek, selection: $state.activeView) {
                             Label("This Week", systemImage: "calendar")
                         }
 
-                        NavigationLink(destination: WeeklyView(date: Date().lastWeek()).frame(minWidth: 350), tag: NavViewState.CurrentView.lastWeek, selection: $state.activeView) {
+                        NavigationLink(destination: WeeklyView(date: Date().lastWeek()), tag: NavViewState.CurrentView.lastWeek, selection: $state.activeView) {
                             Label("Last Week", systemImage: "calendar")
                         }
                     }
@@ -57,7 +57,11 @@ struct ContentView: View {
                                 Image(systemName: tag.totalTasks > 0 ? "tag" : "tag.slash")
                             }
                             .badge(tag.totalTasks)
-                            .onDrag { NSItemProvider(object: tag.draggable())}
+                            .onDrag {
+                                NSItemProvider(object: tag.draggable())
+                            } preview: {
+                                TagPreview(tag)
+                            }
                             .contextMenu {
                                 Button("Rename Tag…") {
                                     tagRenameOp.tag = tag
@@ -110,6 +114,22 @@ struct ContentView: View {
                 .navigationTitle("Tasks")
                 .navigationSubtitle("For daily work, and weekly reporting")
         }
+    }
+
+    @ViewBuilder
+    private func TagPreview(_ tag: TagManager.Tag) -> some View {
+        Label {
+            Text(tag.name)
+        } icon: {
+            Image(systemName: "tag")
+        }
+        .fixedSize()
+        .padding(.horizontal, 8)
+        .padding(.vertical, 2)
+
+        .foregroundColor(.white)
+        .background(Color.accentColor)
+        .clipShape(RoundedRectangle(cornerRadius: 4, style: .circular))
     }
 }
 

@@ -51,8 +51,6 @@ struct WeeklyView: View {
             WeeklyViewStats(focus: state.focus, count: state.completedTasks, exportableCount: state.exportableTasks)
         }
         .frame(minWidth: 350, idealWidth: 350)
-        .navigationTitle("Weekly View")
-        .navigationSubtitle(state.exportableTasks == 0 ? "No exportable tasks" : "\(state.exportableTasks) exportable tasks")
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
         .onAppear { state.focus(on: date) }
         .onChange(of: showAllTasks) { isVisible in state.toggle(visible: isVisible) }
