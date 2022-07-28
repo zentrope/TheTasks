@@ -44,18 +44,19 @@ struct ContentView: View {
                             Label {
                                 HStack(alignment: .center, spacing: 3) {
                                     Text(tag.name)
-                                    Spacer()
+
                                     if tag.pendingTasks > 0 {
                                         Text(String(tag.pendingTasks))
                                             .foregroundColor(.red)
-                                            .font(.callout.monospacedDigit())
-                                            .frame(width: 15, alignment: .leading)
+                                            .font(.caption.monospacedDigit())
+                                            .baselineOffset(6)
                                     }
+                                    Spacer()
                                 }
                             } icon: {
                                 Image(systemName: tag.totalTasks > 0 ? "tag" : "tag.slash")
                             }
-                            .help("\(tag.totalTasks) tasks")
+                            .badge(tag.totalTasks)
                             .onDrag { NSItemProvider(object: tag.draggable())}
                             .contextMenu {
                                 Button("Rename Tag…") {
