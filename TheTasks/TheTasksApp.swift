@@ -10,15 +10,17 @@ import OSLog
 
 fileprivate let log = Logger("TheTasksApp")
 
+let APP_MIN_DETAIL_WIDTH = CGFloat(420)
+
 @main
 struct TheTasksApp: App {
 
     @AppStorage("showBadge") private var showBadge = true
 
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .frame(minWidth: MIN_DETAIL, idealWidth: MIN_DETAIL, maxWidth: .infinity, minHeight: 400, idealHeight: 600, maxHeight: .infinity)
+            ContentView()                
                 .navigationTitle("Tasks")
                 .task {
                     BadgeManager.shared.showBadge = showBadge
