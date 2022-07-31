@@ -21,12 +21,10 @@ struct TheTasksApp: App {
                 .frame(minWidth: 500, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 400, maxHeight: .infinity)
                 .task {
                     BadgeManager.shared.showBadge = showBadge
-
-                    
                 }
                 .onChange(of: showBadge) { updatedShowBadgeToggle in
                     BadgeManager.shared.showBadge = updatedShowBadgeToggle
-                }                
+                }
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)

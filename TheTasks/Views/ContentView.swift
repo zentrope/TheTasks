@@ -21,36 +21,31 @@ struct ContentView: View {
     @State private var tagRenameOp = TagOperation()
     @State private var tagDeleteOp = TagOperation()
 
+    @State private var selectedItem: NavViewState.CurrentView? = .available
+    @State private var navVisibility: NavigationSplitViewVisibility = .all
+
     var body: some View {
-        NavigationView {
+        NavigationSplitView(columnVisibility: $navVisibility) {
             VStack {
-                List {
+                List(selection: $selectedItem) {
                     Section(header: Text("Browse")) {
-                        NavigationLink(destination: AvailableView(), tag: NavViewState.CurrentView.available, selection: $state.activeView) {
-                            Label("Available", systemImage: "clock")
-                        }
-
-                        NavigationLink(destination: WeeklyView(date: Date()), tag: NavViewState.CurrentView.thisWeek, selection: $state.activeView) {
-                            Label("This Week", systemImage: "calendar")
-                        }
-
-                        NavigationLink(destination: WeeklyView(date: Date().lastWeek()), tag: NavViewState.CurrentView.lastWeek, selection: $state.activeView) {
-                            Label("Last Week", systemImage: "calendar")
-                        }
+                        Label("Available", systemImage: "clock")
+                            .tag(NavViewState.CurrentView.available)
+                        Label("This Week", systemImage: "calendar")
+                            .tag(NavViewState.CurrentView.thisWeek)
+                        Label("Last Week", systemImage: "calendar")
+                            .tag(NavViewState.CurrentView.lastWeek)
                     }
-
-                    Section(header: Text("Context")) {
+                    Section(header: Text("Contexts")) {
                         ForEach(state.tags, id: \.id) { tag in
                             Label {
                                 HStack(alignment: .center, spacing: 3) {
                                     Text(tag.name)
 
-                                    if tag.pendingTasks > 0 {
-                                        Text(String(tag.pendingTasks))
-                                            .foregroundColor(.red)
-                                            .font(.caption.monospacedDigit())
-                                            .baselineOffset(6)
-                                    }
+                                    Text(tag.pendingTasks == 0 ? "" : String(tag.pendingTasks))
+                                        .foregroundColor(.red)
+                                        .font(.caption.monospacedDigit())
+                                        .baselineOffset(6)
                                     Spacer()
                                 }
                             } icon: {
@@ -89,30 +84,39 @@ struct ContentView: View {
                 }
                 .padding(.horizontal, 13)
                 .padding(.bottom, 6)
-
-                .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
             }
-            .frame(minWidth: 180, idealWidth: 180)
+            .navigationSplitViewColumnWidth(180)
+        } detail: {
 
-            // When you want to edit a tag, you have to use a modal form.
-            .sheet(isPresented: $tagRenameOp.presented) {
-                EditTagForm(tag: $tagRenameOp.tag) { newTag in
-                    state.upsert(tag: newTag)
-                }
+            switch selectedItem {
+                case .available:
+                    AvailableView()
+                case .thisWeek:
+                    WeeklyView(date: Date())
+                case .lastWeek:
+                    WeeklyView(date: Date().lastWeek())
+                default:
+                    Text("Select View")
             }
+        }
+        .navigationSplitViewStyle(.prominentDetail)
 
-            // When you want to delete a tag, you have to click through a warning about how destructive it is.
-            .confirmationDialog("Delete '\(tagDeleteOp.tag.name)'?", isPresented: $tagDeleteOp.presented) {
-                Button("Delete", role: .destructive) {
-                    state.delete(tag: tagDeleteOp.tag)
-                }
-            } message: {
-                Text("This will remove the tag from all tasks, completed or not.")
+        .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
+
+        // When you want to edit a tag, you have to use a modal form.
+        .sheet(isPresented: $tagRenameOp.presented) {
+            EditTagForm(tag: $tagRenameOp.tag) { newTag in
+                state.upsert(tag: newTag)
             }
+        }
 
-            Text("Pick a view")
-                .navigationTitle("Tasks")
-                .navigationSubtitle("For daily work, and weekly reporting")
+        // When you want to delete a tag, you have to click through a warning about how destructive it is.
+        .confirmationDialog("Delete '\(tagDeleteOp.tag.name)'?", isPresented: $tagDeleteOp.presented) {
+            Button("Delete", role: .destructive) {
+                state.delete(tag: tagDeleteOp.tag)
+            }
+        } message: {
+            Text("This will remove the tag from all tasks, completed or not.")
         }
     }
 
@@ -126,7 +130,6 @@ struct ContentView: View {
         .fixedSize()
         .padding(.horizontal, 8)
         .padding(.vertical, 2)
-
         .foregroundColor(.white)
         .background(Color.accentColor)
         .clipShape(RoundedRectangle(cornerRadius: 4, style: .circular))

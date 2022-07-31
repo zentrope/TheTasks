@@ -90,9 +90,6 @@ class NavViewState: NSObject, ObservableObject {
         case available
         case thisWeek
         case lastWeek
-
-        // Not needed for MacOS 13 and iOS 16
-        case tag(TagManager.Tag)
     }
 
     /// A value for managing the selected tag and setting focus when it's in edit mode.
