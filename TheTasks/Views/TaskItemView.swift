@@ -124,7 +124,7 @@ struct TaskClickIcon: View {
 
     private var color: Color {
         switch status {
-            case .pending: return .accentColor
+            case .pending: return .secondary
             case .cancelled: return Color.brown
             case .completed: return .secondary
         }

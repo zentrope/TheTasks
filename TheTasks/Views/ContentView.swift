@@ -13,6 +13,8 @@ fileprivate struct TagOperation {
     var presented = false
 }
 
+let MIN_DETAIL = CGFloat(500)
+
 struct ContentView: View {
 
     @StateObject private var state = NavViewState()
@@ -22,12 +24,12 @@ struct ContentView: View {
     @State private var tagDeleteOp = TagOperation()
 
     @State private var selectedItem: NavViewState.CurrentView? = .available
-    @State private var navVisibility: NavigationSplitViewVisibility = .all
 
     var body: some View {
-        NavigationSplitView(columnVisibility: $navVisibility) {
+        NavigationSplitView() {
             VStack {
                 List(selection: $selectedItem) {
+
                     Section(header: Text("Browse")) {
                         Label("Available", systemImage: "clock")
                             .tag(NavViewState.CurrentView.available)
@@ -36,6 +38,7 @@ struct ContentView: View {
                         Label("Last Week", systemImage: "calendar")
                             .tag(NavViewState.CurrentView.lastWeek)
                     }
+
                     Section(header: Text("Contexts")) {
                         ForEach(state.tags, id: \.id) { tag in
                             Label {
@@ -46,12 +49,16 @@ struct ContentView: View {
                                         .foregroundColor(.red)
                                         .font(.caption.monospacedDigit())
                                         .baselineOffset(6)
+
                                     Spacer()
+
+                                    Text(String(tag.totalTasks))
+                                        .foregroundColor(.secondary)
+                                        .font(.callout)
                                 }
                             } icon: {
                                 Image(systemName: tag.totalTasks > 0 ? "tag" : "tag.slash")
                             }
-                            .badge(tag.totalTasks)
                             .onDrag {
                                 NSItemProvider(object: tag.draggable())
                             } preview: {
@@ -70,7 +77,7 @@ struct ContentView: View {
                         }
                     }
                 }
-                .listStyle(.sidebar)
+                .listStyle(.sidebar)                
                 Spacer()
                 HStack {
                     Button {
@@ -85,19 +92,21 @@ struct ContentView: View {
                 .padding(.horizontal, 13)
                 .padding(.bottom, 6)
             }
-            .navigationSplitViewColumnWidth(180)
+            .navigationSplitViewColumnWidth(min: 180, ideal: 180, max: 220)
         } detail: {
-
-            switch selectedItem {
-                case .available:
-                    AvailableView()
-                case .thisWeek:
-                    WeeklyView(date: Date())
-                case .lastWeek:
-                    WeeklyView(date: Date().lastWeek())
-                default:
-                    Text("Select View")
+            VStack {
+                switch selectedItem {
+                    case .available:
+                        AvailableView()
+                    case .thisWeek:
+                        WeeklyView(date: Date())
+                    case .lastWeek:
+                        WeeklyView(date: Date().lastWeek())
+                    default:
+                        Text("Select View")
+                }
             }
+            .frame(minWidth: MIN_DETAIL, idealWidth: MIN_DETAIL, maxWidth: .infinity)
         }
         .navigationSplitViewStyle(.prominentDetail)
 

@@ -47,10 +47,9 @@ struct WeeklyView: View {
                     }
                 }
             }
-            .listStyle(.inset(alternatesRowBackgrounds: true))
+            .listStyle(.inset(alternatesRowBackgrounds: false))
             WeeklyViewStats(focus: state.focus, count: state.completedTasks, exportableCount: state.exportableTasks)
         }
-        .frame(minWidth: 350, idealWidth: 350)
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
         .onAppear { state.focus(on: date) }
         .onChange(of: showAllTasks) { isVisible in state.toggle(visible: isVisible) }

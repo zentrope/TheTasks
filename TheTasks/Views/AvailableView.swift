@@ -20,26 +20,17 @@ struct AvailableView: View {
 
     @State private var deleteOp = TaskOp()
     @State private var upsertOp = TaskOp()
+    @State private var selectedTask: TheTask.ID?
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Hack, to keep the list from showing up in the toolbar when window style is set to to .hiddenTitleBar
-            Spacer().frame(height: 0.5)
-
-            List(selection: $state.selectedTask) {
-                ForEach(state.tasks, id: \.id) { task in
-                    TaskItemView(task: task, action: handleTaskEvent)
-                        .padding(8)
-                }
+        List(selection: $selectedTask) {
+            ForEach(state.tasks, id: \.id) { task in
+                TaskItemView(task: task, action: handleTaskEvent)
+                    .padding(8)
             }
-            .listStyle(.inset(alternatesRowBackgrounds: false))
 
-            TaskStatsView(stats: state.stats)
         }
-        .frame(minWidth: 350, idealWidth: 350)
-
-        // Hack: so that the toolbar doesn't get the semi-transparent look
-        .background(.background)
+        .listStyle(.inset)
 
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
 
@@ -109,8 +100,8 @@ fileprivate struct TagFilterButton: View {
     typealias FilterAction = ([TagManager.Tag], Bool, String) -> Void
 
     enum Logical: String, CaseIterable {
-        case matchAny = "Match any"
-        case matchAll = "Match all"
+        case matchAny = "Any Selected"
+        case matchAll = "All Selected"
     }
 
     var action: FilterAction?

@@ -5,12 +5,10 @@
 //  Created by Keith Irwin on 6/19/22.
 //
 
-import Combine
 import CoreData
-import Foundation
 import OSLog
 
-fileprivate let log = Logger("AppViewState")
+fileprivate let log = Logger("AvailableViewState")
 
 enum FocusTask: Hashable {
     case none
@@ -40,18 +38,12 @@ final class AvailableViewState: NSObject, ObservableObject { // NSObject require
         }
     }
 
-    @Published var selectedTask: TheTask.ID?
-    @Published var focusedTask: FocusTask?
-
-    @Published var stats = TaskStats(completed: 0, total: 0, pending: 0)
-
     // MARK: - Local State
 
     private var cursor: NSFetchedResultsController<TaskMO>
 
     // If a tag is re-named, we want to refresh the display. This will also refresh the display if tags are added or removed, but it's rare enough that I don't think it's necessary to refine.
     private var tagCursor: NSFetchedResultsController<TagMO>
-    private var subscribers = Set<AnyCancellable>()
 
     override init() {
         self.cursor = TaskManager.shared.cursor()
@@ -146,12 +138,7 @@ extension AvailableViewState {
             do {
                 try cursor.performFetch()
                 let tasks = cursor.fetchedObjects ?? []
-                let total = try TaskManager.shared.numberOfTasks()
-                let completed = try TaskManager.shared.numberOfTasks(withStatus: .completed)
-                let pending = try TaskManager.shared.numberOfTasks(withStatus: .pending)
-
                 self.tasks = tasks.map { .init(mo: $0) }
-                self.stats = TaskStats(completed: completed, total: total, pending: pending)
             }
             catch (let error) {
                 showAlert(error)

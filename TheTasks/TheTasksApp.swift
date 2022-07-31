@@ -18,7 +18,8 @@ struct TheTasksApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .frame(minWidth: 500, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 400, maxHeight: .infinity)
+                .frame(minWidth: MIN_DETAIL, idealWidth: MIN_DETAIL, maxWidth: .infinity, minHeight: 400, idealHeight: 600, maxHeight: .infinity)
+                .navigationTitle("Tasks")
                 .task {
                     BadgeManager.shared.showBadge = showBadge
                 }
@@ -26,8 +27,6 @@ struct TheTasksApp: App {
                     BadgeManager.shared.showBadge = updatedShowBadgeToggle
                 }
         }
-        .windowStyle(.hiddenTitleBar)
-        .windowToolbarStyle(.unified)
         .commands {
             SidebarCommands()
 
