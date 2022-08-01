@@ -18,10 +18,6 @@ final class WeeklyViewState: NSObject, ObservableObject {
     @Published var days = [TaskDay]()
     @Published var focus = Date()
 
-    // Status
-    @Published var completedTasks = 0
-    @Published var exportableTasks = 0
-
     // Reporting
     @Published var error: Error?
     @Published var showAlert = false
@@ -150,8 +146,6 @@ final class WeeklyViewState: NSObject, ObservableObject {
                 }
 
                 self.days = records
-                self.completedTasks = tasks.count
-                self.exportableTasks = tasks.filter { $0.isExportable }.count
             } catch (let error) {
                 show(alert: error)
             }

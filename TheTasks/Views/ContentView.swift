@@ -7,15 +7,19 @@
 
 import SwiftUI
 
+
 struct ContentView: View {
 
-    @State private var selectedItem: NavViewState.CurrentView? = .available
+    @State private var selectedItem: SidebarViewState.CurrentView? = .available
+    @State private var navState: NavigationSplitViewVisibility = .all
+
+    @AppStorage("NavigationState") private var storedNavigationState: Data?
 
     var body: some View {
         VStack {
-            NavigationSplitView {
+            NavigationSplitView(columnVisibility: $navState) {
                 SidebarView(selection: $selectedItem)
-                    .navigationSplitViewColumnWidth(min: 180, ideal: 180, max: 220)
+                    .navigationSplitViewColumnWidth(min: 180, ideal: 180, max: 220)                    
             } detail: {
                 VStack {
                     switch selectedItem {
@@ -33,6 +37,17 @@ struct ContentView: View {
             }
         }
         .frame(minWidth: 180 + APP_MIN_DETAIL_WIDTH)
+        .onChange(of: navState) { visibility in
+            storedNavigationState = NavigationStoredState(visibility: visibility, view: selectedItem).getData()
+        }
+        .onChange(of: selectedItem) { item in
+            storedNavigationState = NavigationStoredState(visibility: navState, view: item).getData()
+        }
+        .task {
+            let restored = NavigationStoredState.decode(data: storedNavigationState)
+            navState = restored.navigationVisibility
+            selectedItem = restored.currentView
+        }
     }
 }
 

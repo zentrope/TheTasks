@@ -21,17 +21,17 @@
 		531135D72860099900B165BD /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531135D62860099900B165BD /* TaskManager.swift */; };
 		531135DB28600BE700B165BD /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531135DA28600BE700B165BD /* PersistenceError.swift */; };
 		531135DD28600DBB00B165BD /* AvailableViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531135DC28600DBB00B165BD /* AvailableViewState.swift */; };
+		531E5F302898546500923B08 /* NavigationStoredState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531E5F2F2898546500923B08 /* NavigationStoredState.swift */; };
 		5326B9AA2872062D006CFCDE /* BadgeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326B9A92872062D006CFCDE /* BadgeManager.swift */; };
 		5326B9AC287212DF006CFCDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326B9AB287212DF006CFCDE /* SettingsView.swift */; };
 		53294D0F286022C20013AE5F /* TaskItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53294D0E286022C20013AE5F /* TaskItemView.swift */; };
 		53294D11286027E90013AE5F /* DateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53294D10286027E90013AE5F /* DateView.swift */; };
 		533A4DE92868276D007E3B3F /* WeeklyViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533A4DE82868276D007E3B3F /* WeeklyViewState.swift */; };
 		533A4DEB28682C77007E3B3F /* WeeklyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533A4DEA28682C77007E3B3F /* WeeklyView.swift */; };
-		533A4DED28683B10007E3B3F /* WeeklyViewStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533A4DEC28683B10007E3B3F /* WeeklyViewStats.swift */; };
 		533B848B288CACE70085C718 /* TagPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533B848A288CACE70085C718 /* TagPicker.swift */; };
 		533B848D288CADC70085C718 /* TagPickerViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533B848C288CADC70085C718 /* TagPickerViewState.swift */; };
 		534FE32428850AE50057DE8D /* EditTagForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534FE32328850AE50057DE8D /* EditTagForm.swift */; };
-		536A50DD2878921200F99B84 /* NavViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536A50DC2878921200F99B84 /* NavViewState.swift */; };
+		536A50DD2878921200F99B84 /* SidebarViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536A50DC2878921200F99B84 /* SidebarViewState.swift */; };
 		536A50DF2878957300F99B84 /* NotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536A50DE2878957300F99B84 /* NotificationCenter.swift */; };
 		536CBD4328838079003F3083 /* TagBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536CBD4228838079003F3083 /* TagBadgeView.swift */; };
 		536EBB86288347DE008F1D07 /* UTType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536EBB85288347DE008F1D07 /* UTType.swift */; };
@@ -89,17 +89,17 @@
 		531135D62860099900B165BD /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
 		531135DA28600BE700B165BD /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
 		531135DC28600DBB00B165BD /* AvailableViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableViewState.swift; sourceTree = "<group>"; };
+		531E5F2F2898546500923B08 /* NavigationStoredState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStoredState.swift; sourceTree = "<group>"; };
 		5326B9A92872062D006CFCDE /* BadgeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeManager.swift; sourceTree = "<group>"; };
 		5326B9AB287212DF006CFCDE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		53294D0E286022C20013AE5F /* TaskItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItemView.swift; sourceTree = "<group>"; };
 		53294D10286027E90013AE5F /* DateView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateView.swift; sourceTree = "<group>"; };
 		533A4DE82868276D007E3B3F /* WeeklyViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyViewState.swift; sourceTree = "<group>"; };
 		533A4DEA28682C77007E3B3F /* WeeklyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyView.swift; sourceTree = "<group>"; };
-		533A4DEC28683B10007E3B3F /* WeeklyViewStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyViewStats.swift; sourceTree = "<group>"; };
 		533B848A288CACE70085C718 /* TagPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagPicker.swift; sourceTree = "<group>"; };
 		533B848C288CADC70085C718 /* TagPickerViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagPickerViewState.swift; sourceTree = "<group>"; };
 		534FE32328850AE50057DE8D /* EditTagForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTagForm.swift; sourceTree = "<group>"; };
-		536A50DC2878921200F99B84 /* NavViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavViewState.swift; sourceTree = "<group>"; };
+		536A50DC2878921200F99B84 /* SidebarViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewState.swift; sourceTree = "<group>"; };
 		536A50DE2878957300F99B84 /* NotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenter.swift; sourceTree = "<group>"; };
 		536CBD4228838079003F3083 /* TagBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagBadgeView.swift; sourceTree = "<group>"; };
 		536EBB85288347DE008F1D07 /* UTType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTType.swift; sourceTree = "<group>"; };
@@ -258,7 +258,6 @@
 				53760EBC2870B5A900B0731E /* TaskIcon.swift */,
 				53294D0E286022C20013AE5F /* TaskItemView.swift */,
 				533A4DEA28682C77007E3B3F /* WeeklyView.swift */,
-				533A4DEC28683B10007E3B3F /* WeeklyViewStats.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -267,9 +266,10 @@
 			isa = PBXGroup;
 			children = (
 				531135DC28600DBB00B165BD /* AvailableViewState.swift */,
-				536A50DC2878921200F99B84 /* NavViewState.swift */,
-				533A4DE82868276D007E3B3F /* WeeklyViewState.swift */,
+				531E5F2F2898546500923B08 /* NavigationStoredState.swift */,
+				536A50DC2878921200F99B84 /* SidebarViewState.swift */,
 				533B848C288CADC70085C718 /* TagPickerViewState.swift */,
+				533A4DE82868276D007E3B3F /* WeeklyViewState.swift */,
 			);
 			path = ViewState;
 			sourceTree = "<group>";
@@ -420,6 +420,7 @@
 				537D0A142868D42600B98E77 /* SavePanel.swift in Sources */,
 				538F3B9128642E1600F33742 /* AvailableView.swift in Sources */,
 				531135D72860099900B165BD /* TaskManager.swift in Sources */,
+				531E5F302898546500923B08 /* NavigationStoredState.swift in Sources */,
 				531135DB28600BE700B165BD /* PersistenceError.swift in Sources */,
 				53D51CBA2879257E005020CE /* TagManager.swift in Sources */,
 				531135D52860072400B165BD /* TheTask.swift in Sources */,
@@ -435,7 +436,7 @@
 				533B848B288CACE70085C718 /* TagPicker.swift in Sources */,
 				53760EBD2870B5A900B0731E /* TaskIcon.swift in Sources */,
 				53BFC8BE2866947F006E3BAA /* Font.swift in Sources */,
-				536A50DD2878921200F99B84 /* NavViewState.swift in Sources */,
+				536A50DD2878921200F99B84 /* SidebarViewState.swift in Sources */,
 				5326B9AA2872062D006CFCDE /* BadgeManager.swift in Sources */,
 				5311359E2860041A00B165BD /* ContentView.swift in Sources */,
 				533B848D288CADC70085C718 /* TagPickerViewState.swift in Sources */,
@@ -445,7 +446,6 @@
 				534FE32428850AE50057DE8D /* EditTagForm.swift in Sources */,
 				53294D0F286022C20013AE5F /* TaskItemView.swift in Sources */,
 				53BFC8BC2866933C006E3BAA /* Date.swift in Sources */,
-				533A4DED28683B10007E3B3F /* WeeklyViewStats.swift in Sources */,
 				5311359C2860041A00B165BD /* TheTasksApp.swift in Sources */,
 				536A50DF2878957300F99B84 /* NotificationCenter.swift in Sources */,
 				53D51CB6287923B7005020CE /* TagMO+CoreDataProperties.swift in Sources */,
@@ -608,7 +608,7 @@
 				CODE_SIGN_ENTITLEMENTS = TheTasks/TheTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2515;
+				CURRENT_PROJECT_VERSION = 2561;
 				DEVELOPMENT_ASSET_PATHS = "\"TheTasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -637,7 +637,7 @@
 				CODE_SIGN_ENTITLEMENTS = TheTasks/TheTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2515;
+				CURRENT_PROJECT_VERSION = 2561;
 				DEVELOPMENT_ASSET_PATHS = "\"TheTasks/Preview Content\"";
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -665,7 +665,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2515;
+				CURRENT_PROJECT_VERSION = 2561;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
@@ -685,7 +685,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2515;
+				CURRENT_PROJECT_VERSION = 2561;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
@@ -703,7 +703,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2515;
+				CURRENT_PROJECT_VERSION = 2561;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -720,7 +720,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2515;
+				CURRENT_PROJECT_VERSION = 2561;
 				DEVELOPMENT_TEAM = 5Y5389EUC6;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;

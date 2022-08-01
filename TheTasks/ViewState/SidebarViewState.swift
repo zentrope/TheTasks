@@ -1,26 +1,24 @@
 //
-//  NavViewState.swift
+//  SidebarViewState.swift
 //  TheTasks
 //
 //  Created by Keith Irwin on 7/8/22.
 //
 
-import Combine
+//import Combine
 import CoreData
 import OSLog
 
 fileprivate let log = Logger("NavViewState")
 
 @MainActor
-class NavViewState: NSObject, ObservableObject {
+class SidebarViewState: NSObject, ObservableObject {
 
-    @Published var activeView: CurrentView? = .available
     @Published var tags = [TagManager.Tag]()
 
     @Published var error: Error?
     @Published var showAlert = false
 
-    private var subscriptions = Set<AnyCancellable>()
     private var cursor: NSFetchedResultsController<TagMO>
     private var taskCursor: NSFetchedResultsController<TaskMO>
 
@@ -36,18 +34,6 @@ class NavViewState: NSObject, ObservableObject {
         try? taskCursor.performFetch() // initial request
 
         reload()
-        NotificationCenter.default.publisher(for: .appNavigateToView)
-            .removeDuplicates()
-            .sink { value in
-                if let view = value.userInfo?["view"] as? CurrentView {
-                    self.activeView = view
-                }
-            }
-            .store(in: &subscriptions)
-    }
-
-    deinit {
-        subscriptions.forEach { $0.cancel() }
     }
 
     func upsert(tag: TagManager.Tag) {
@@ -86,20 +72,14 @@ class NavViewState: NSObject, ObservableObject {
         self.showAlert = true
     }
 
-    enum CurrentView: Hashable {
+    enum CurrentView: Hashable, Codable {
         case available
         case thisWeek
         case lastWeek
     }
-
-    /// A value for managing the selected tag and setting focus when it's in edit mode.
-    enum FocusTag: Hashable {
-        case none
-        case tag(TagManager.Tag.ID)
-    }
 }
 
-extension NavViewState: NSFetchedResultsControllerDelegate {
+extension SidebarViewState: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         reload()
     }

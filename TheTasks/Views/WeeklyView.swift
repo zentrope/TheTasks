@@ -16,54 +16,54 @@ struct WeeklyView: View {
     @AppStorage("showMostRecentFirst") var showMostRecentFirst = true
 
     var body: some View {
-        VStack(spacing: 0) {
-            List {
-                ForEach(state.days, id: \.id) { day in
-                    Section(header: DateView(date: day.date, format: .journalStyle)) {
-                        ForEach(day.tasks, id: \.id) { task in
+        List {
+            ForEach(state.days, id: \.id) { day in
+                Section(header: DateView(date: day.date, format: .journalStyle)) {
+                    ForEach(day.tasks, id: \.id) { task in
+                        HStack {
+                            Image(systemName: "arrow.down.circle")
+                                .foregroundColor(task.isExportable ? .mint : .secondary)
+                                .font(.title2)
+                                .help(task.isExportable ? "Omit from export" : "Include in export")
+                                .onTapGesture {
+                                    state.update(task: task.id, isExportable: !task.isExportable)
+                                }
+
+                            Text(task.task)
+                                .foregroundColor(task.isExportable ? .primary : .secondary)
+
+                            Spacer()
                             HStack {
-                                Image(systemName: "arrow.down.circle")
-                                    .foregroundColor(task.isExportable ? .mint : .secondary)
-                                    .font(.title2)
-                                    .help(task.isExportable ? "Omit from export" : "Include in export")
-                                    .onTapGesture {
-                                        state.update(task: task.id, isExportable: !task.isExportable)
-                                    }
-
-                                Text(task.task)
-                                    .foregroundColor(task.isExportable ? .primary : .secondary)
-
-                                Spacer()
-                                HStack {
-                                    ForEach(task.tags, id: \.id) { tag in
-                                        TagBadgeView(tag: tag)
-                                            .font(.caption)
-                                            .opacity(task.isExportable ? 1 : 0.5)
-                                    }
+                                ForEach(task.tags, id: \.id) { tag in
+                                    TagBadgeView(tag: tag)
+                                        .font(.caption)
+                                        .opacity(task.isExportable ? 1 : 0.5)
                                 }
                             }
-                            .lineLimit(1)
                         }
+                        .lineLimit(1)
                     }
                 }
             }
-            .listStyle(.inset(alternatesRowBackgrounds: false))
-            WeeklyViewStats(focus: state.focus, count: state.completedTasks, exportableCount: state.exportableTasks)
         }
+        .listStyle(.inset(alternatesRowBackgrounds: false))
         .alert(state.error?.localizedDescription ?? "Error", isPresented: $state.showAlert) {}
-        .onAppear { state.focus(on: date) }
+        .task {
+            state.focus(on: date)
+        }
         .onChange(of: showAllTasks) { isVisible in state.toggle(visible: isVisible) }
         .onChange(of: showMostRecentFirst) { isMostRecent in state.resort(mostRecentFirst: isMostRecent) }
         .toolbar {
             Spacer()
-
-            Menu {
-                Toggle("Show all tasks", isOn: $showAllTasks)
-                Divider()
-                Toggle("Most recent first", isOn: $showMostRecentFirst)
-            } label: {
-                Image(systemName: "line.3.horizontal.decrease.circle")
+            Toggle(isOn: $showAllTasks) {
+                Image(systemName: "checkmark.circle")
             }
+            .help(showAllTasks ? "Show exportable tasks only" : "Show all tasks")
+
+            Toggle(isOn: $showMostRecentFirst) {
+                Image(systemName: showMostRecentFirst ? "arrow.up.circle" : "arrow.down.circle")
+            }
+            .help(showMostRecentFirst ? "Show recent last" : "Show recent first")
 
             Menu {
                 Button("Export this week") {
@@ -75,7 +75,7 @@ struct WeeklyView: View {
             } label: {
                 Image(systemName: "square.and.arrow.down")
             }
-                .help("Export weekly work task report")
+            .help("Export weekly work task report")
         }
     }
 }

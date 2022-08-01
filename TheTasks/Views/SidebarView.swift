@@ -14,25 +14,28 @@ fileprivate struct TagOperation {
 }
 
 struct SidebarView: View {
-    @StateObject private var state = NavViewState()
+    @StateObject private var state = SidebarViewState()
 
     @State private var dropFocus = false
     @State private var tagRenameOp = TagOperation()
     @State private var tagDeleteOp = TagOperation()
 
-    @Binding var selection: NavViewState.CurrentView?
+    @Binding var selection: SidebarViewState.CurrentView?
 
     var body: some View {
         VStack {
             List(selection: $selection) {
 
                 Section(header: Text("Browse")) {
-                    Label("Available", systemImage: "clock")
-                        .tag(NavViewState.CurrentView.available)
-                    Label("This Week", systemImage: "calendar")
-                        .tag(NavViewState.CurrentView.thisWeek)
-                    Label("Last Week", systemImage: "calendar")
-                        .tag(NavViewState.CurrentView.lastWeek)
+                    NavigationLink(value: SidebarViewState.CurrentView.available) {
+                        Label("Available", systemImage: "clock")
+                    }
+                    NavigationLink(value: SidebarViewState.CurrentView.thisWeek) {
+                        Label("This Week", systemImage: "calendar")
+                    }
+                    NavigationLink(value: SidebarViewState.CurrentView.lastWeek) {
+                        Label("Last Week", systemImage: "calendar")
+                    }
                 }
 
                 Section(header: Text("Contexts")) {

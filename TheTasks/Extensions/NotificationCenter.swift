@@ -15,7 +15,7 @@ extension Notification.Name {
 
 extension NotificationCenter {
 
-    func navigateTo(view: NavViewState.CurrentView) {
+    func navigateTo(view: SidebarViewState.CurrentView) {
         post(name: .appNavigateToView, object: nil, userInfo: ["view": view])
     }
 }

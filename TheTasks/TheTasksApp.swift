@@ -10,18 +10,16 @@ import OSLog
 
 fileprivate let log = Logger("TheTasksApp")
 
-let APP_MIN_DETAIL_WIDTH = CGFloat(420)
+let APP_MIN_DETAIL_WIDTH = CGFloat(350)
 
 @main
 struct TheTasksApp: App {
 
     @AppStorage("showBadge") private var showBadge = true
 
-
     var body: some Scene {
         WindowGroup {
-            ContentView()                
-                .navigationTitle("Tasks")
+            ContentView()
                 .task {
                     BadgeManager.shared.showBadge = showBadge
                 }
@@ -29,6 +27,7 @@ struct TheTasksApp: App {
                     BadgeManager.shared.showBadge = updatedShowBadgeToggle
                 }
         }
+        .windowStyle(.hiddenTitleBar)
         .commands {
             SidebarCommands()
 
