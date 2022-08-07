@@ -10,13 +10,10 @@ import OSLog
 
 fileprivate let log = Logger("AvailableViewState")
 
-enum FocusTask: Hashable {
-    case none
-    case task(TheTask.ID)
-}
-
 @MainActor
 final class AvailableViewState: NSObject, ObservableObject { // NSObject required for use as a delegate
+
+    typealias Tag = TagManager.Tag
 
     // MARK: - Publishers
 
@@ -26,17 +23,7 @@ final class AvailableViewState: NSObject, ObservableObject { // NSObject require
 
     // Filters
 
-    @Published var showCompleted = true {
-        didSet {
-            refilter()
-        }
-    }
-
-    @Published var showToday = true {
-        didSet {
-            refilter()
-        }
-    }
+    @Published var viewFilter = TaskViewFilter(tags: [], rule: .or, completed: .today)
 
     // MARK: - Local State
 
@@ -58,7 +45,8 @@ final class AvailableViewState: NSObject, ObservableObject { // NSObject require
         self.cursor.fetchRequest.sortDescriptors = [
             NSSortDescriptor(key: "created", ascending: false)
         ]
-        self.refilter()
+
+        processFilter()
     }
 }
 
@@ -76,23 +64,19 @@ extension AvailableViewState {
         }
     }
 
+    func processFilter() {
+        cursor.fetchRequest.predicate = self.viewFilter.predicate()
+        reload()
+    }
+
+    /// Remove a tag from the task.
     func add(tag: TagManager.Tag, to task: TheTask) {
         doTask { try await TaskManager.shared.add(tag: tag, to: task) }
     }
 
+    /// Add a tag to the task.
     func remove(tag: TagManager.Tag, from task: TheTask) {
         doTask { try await TaskManager.shared.remove(tag: tag, from: task) }
-    }
-
-    /// Update a task's name.
-    func update(task id: UUID, name: String) {
-        Task {
-            do {
-                try await TaskManager.shared.update(task: id, description: name)
-            } catch (let error) {
-                showAlert(error)
-            }
-        }
     }
 
     /// Update a tasks's status.
@@ -113,11 +97,12 @@ extension AvailableViewState {
             do {
                 try await TaskManager.shared.upsert(task: task)
             } catch {
-                print("ERROR: \(error)")
+                showAlert(error)
             }
         }
     }
 
+    /// Delete a task
     func delete(task id: UUID) {
         Task {
             do {
@@ -150,36 +135,6 @@ extension AvailableViewState {
         log.error("\(error)")
         self.error = error
         self.showAlert = true
-    }
-
-    private func refilter() {
-        let fromDate = Calendar.current.startOfDay(for: Date())
-        let toDate = Calendar.current.date(byAdding: .day, value: 1, to: fromDate)!
-
-        let completedToday = NSPredicate(format: "completed >= %@ and completed <= %@", fromDate as NSDate, toDate as NSDate)
-        let available = NSPredicate(format: "status == 'pending'")
-
-        if !showToday {
-            cursor.fetchRequest.predicate = nil
-        } else if showCompleted {
-            cursor.fetchRequest.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [completedToday, available])
-        } else {
-            cursor.fetchRequest.predicate = available
-        }
-
-        reload()
-    }
-}
-
-// MARK: - Presentation Objects
-
-extension AvailableViewState {
-
-    struct TaskStats: Identifiable {
-        var id = UUID()
-        var completed: Int
-        var total: Int
-        var pending: Int
     }
 }
 

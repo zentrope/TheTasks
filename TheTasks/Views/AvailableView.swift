@@ -28,7 +28,7 @@ struct AvailableView: View {
                 TaskItemView(task: task, action: handleTaskEvent)
                     .padding(8)
             }
-            
+
         }
         .listStyle(.inset)
 
@@ -40,29 +40,18 @@ struct AvailableView: View {
             }
         }
 
-        .sheet(isPresented: $upsertOp.isPresented, content: {
-            EditTaskForm(task: $upsertOp.task) { revisedTask in                
+        .sheet(isPresented: $upsertOp.isPresented) {
+            EditTaskForm(task: $upsertOp.task) { revisedTask in
                 state.upsert(task: revisedTask)
             }
-        })
+        }
 
         .toolbar {
-            Toggle(isOn: $state.showCompleted) {
-                Image(systemName: state.showCompleted ? "checkmark.circle.fill" : "checkmark.circle")
-                    .frame(width: 15)
-            }
-            .help("Show completed")
-
-            Toggle(isOn: $state.showToday) {
-                Image(systemName: state.showToday ? "clock.fill" : "clock")
-                    .frame(width: 15)
-            }
-            .help("Show today only")
-
             Spacer()
 
-            TagFilterButton()
-                .help("Non-function filter")
+            TagFilterButton(filter: $state.viewFilter) {
+                state.processFilter()
+            }
 
             Button {
                 upsertOp.task = TheTask(newTask: "New Task")
@@ -78,8 +67,6 @@ struct AvailableView: View {
             case .edit(task: let task):
                 upsertOp.task = task
                 upsertOp.isPresented = true
-            case .save(let task):
-                state.update(task: task.id, name: task.task)
             case .delete(let task):
                 deleteOp.task = task
                 deleteOp.isPresented.toggle()
@@ -97,20 +84,11 @@ struct AvailableView: View {
 
 fileprivate struct TagFilterButton: View {
 
-    typealias FilterAction = ([TagManager.Tag], Bool, String) -> Void
-
-    enum Logical: String, CaseIterable {
-        case matchAny = "Any Selected"
-        case matchAll = "All Selected"
-    }
-
-    var action: FilterAction?
+    @Binding
+    var filter: TaskViewFilter
+    var action: (() -> Void)?
 
     @State private var show = false
-    @State private var strategy = Logical.matchAll
-    @State private var savedQuery = ""
-    @State private var shouldSave = false
-    @State private var selectedTags = [TagManager.Tag]()
 
     var body: some View {
         Button {
@@ -118,29 +96,40 @@ fileprivate struct TagFilterButton: View {
         } label: {
             Image(systemName: "tag")
         }
-        .popover(isPresented: $show, content: {
-            VStack(alignment: .leading, spacing: 10) {
-                Picker("", selection: $strategy) {
-                    ForEach(Logical.allCases, id: \.self) { strategy in
-                        Text(strategy.rawValue).tag(strategy)
+        .popover(isPresented: $show) {
+
+            Form {
+                Picker("Tasks:", selection: $filter.completed) {
+                    ForEach(TaskViewFilter.Completed.allCases, id: \.self) { coverage in
+                        Text(coverage.rawValue).tag(coverage)
                     }
                 }
-                Divider()
-                TagPicker(initialTags: [], action: { tags in
-                    selectedTags = tags
+                .pickerStyle(.radioGroup)
+
+                Picker("Match:", selection: $filter.rule) {
+                    ForEach(TaskViewFilter.Rule.allCases, id: \.self) { op in
+                        Text(op.rawValue).tag(op)
+                    }
+                }
+
+                TagPicker(initialTags: filter.tags, action: { tags in
+                    filter.tags = tags
                 })
                 .listStyle(.plain)
 
-                HStack(spacing: 10) {
-                    TextField("Save search name", text: $savedQuery)
-                    Toggle("Save?", isOn: $shouldSave)
-                        .disabled(savedQuery.isEmpty)
+                Button("Reset") {
+                    filter.completed = .today
+                    filter.rule = .or
+                    filter.tags = []
+                    action?()
                 }
             }
-            .frame(minWidth: 150, minHeight: 300, maxHeight: 600)
-
+            .frame(minWidth: 150, minHeight: 500, maxHeight: 600)
             .padding()
-        })
+            .onChange(of: filter) { _ in
+                action?()
+            }
+        }
     }
 }
 

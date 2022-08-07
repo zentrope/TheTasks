@@ -59,6 +59,7 @@ struct TaskManager {
 
     /// Update the task if it already exists, otherwise create a new one.
     func upsert(task: TheTask) async throws {
+        print("🔥 upsert")
         let context = controller.newBackgroundContext()
         try await context.perform {
             let taskMO = findOrMake(task: task, context: context)

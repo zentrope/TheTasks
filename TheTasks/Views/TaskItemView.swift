@@ -11,7 +11,6 @@ import UniformTypeIdentifiers
 
 enum TaskItemEvent {
     case delete(TheTask)
-    case save(TheTask)
     case edit(task: TheTask)
     case complete(TheTask)
     case pending(TheTask)
