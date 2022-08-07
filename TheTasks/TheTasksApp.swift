@@ -27,7 +27,7 @@ struct TheTasksApp: App {
                     BadgeManager.shared.showBadge = updatedShowBadgeToggle
                 }
         }
-        .windowStyle(.hiddenTitleBar)
+        .windowToolbarStyle(.unified(showsTitle: false))
         .commands {
             SidebarCommands()
 

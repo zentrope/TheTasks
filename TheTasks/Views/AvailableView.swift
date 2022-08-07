@@ -28,7 +28,7 @@ struct AvailableView: View {
                 TaskItemView(task: task, action: handleTaskEvent)
                     .padding(8)
             }
-
+            
         }
         .listStyle(.inset)
 
@@ -70,7 +70,7 @@ struct AvailableView: View {
             } label: {
                 Image(systemName: "plus")
             }
-        }
+        }        
     }
 
     private func handleTaskEvent(_ event: TaskItemEvent) {

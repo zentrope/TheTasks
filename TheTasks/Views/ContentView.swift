@@ -21,7 +21,7 @@ struct ContentView: View {
                 SidebarView(selection: $selectedItem)
                     .navigationSplitViewColumnWidth(min: 180, ideal: 180, max: 220)                    
             } detail: {
-                VStack {
+                Group {
                     switch selectedItem {
                         case .available:
                             AvailableView()
